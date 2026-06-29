@@ -43,7 +43,7 @@ Four self-contained skills, auto-discovered from `skills/`. Each embeds the same
 4. Ask for missing context instead of fabricating.
 5. Report results (ids, locations, counts).
 
-**No role/permission language** appears in any skill — that is a platform RLS concern and drift-prone. **No enum catalogs** are restated — agents call `get_field_options` for live values.
+**No role/permission language** appears in any skill — that is a platform access-control concern and drift-prone. **No enum catalogs** are restated — agents call `get_field_options` for live values.
 
 ## Distribution model
 
