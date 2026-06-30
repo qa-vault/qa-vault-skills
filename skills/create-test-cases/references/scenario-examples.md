@@ -2,7 +2,8 @@
 
 Reference material for `create-test-cases`. These show what a good manual UI scenario looks like — the naming, the comprehensive UI-verifiable expected results, and the coverage spread. The **first** example is in the QA Vault draft form (the format you write into `qa-vault/`); the rest are prose illustrating expected-result richness across project types.
 
-Two rules visible throughout:
+Rules visible throughout:
+- **Titles describe the scenario only** — `[Context] + [Action] + [Outcome]`, with **no suite/module-name prefix** (the suite + tags already supply module context).
 - **Only UI-verifiable detail** in expected results — no endpoints, status codes, table names, or logs.
 - **Preconditions only when non-obvious.**
 
@@ -13,7 +14,7 @@ Two rules visible throughout:
 This is exactly how cases look in a `qa-vault/<suite>/<set>.md` draft. Folder = suite (e.g. `qa-vault/Checkout/`), file = a set (e.g. `payment.md`). `automation: not_automated` applies to all and is not repeated per block.
 
 ```
-### Checkout — pay with a valid card and reach order confirmation
+### Pay with a valid card and reach order confirmation
 - Priority: high
 - Behavior: positive
 - Tags: checkout, payment
@@ -23,7 +24,7 @@ This is exactly how cases look in a `qa-vault/<suite>/<set>.md` draft. Folder = 
   2. Confirm the order → Expected: The order confirmation page loads showing an order number and a summary of items, totals, shipping address, and payment method (last 4 digits). A confirmation message is displayed.
   3. Check the account's email inbox → Expected: An order confirmation email arrives with the order number and the same totals shown on the confirmation page.
 
-### Checkout — declined card shows an error and creates no order
+### Declined card shows an error and creates no order
 - Priority: high
 - Behavior: negative
 - Tags: checkout, payment
@@ -32,7 +33,7 @@ This is exactly how cases look in a `qa-vault/<suite>/<set>.md` draft. Folder = 
   1. Enter a card the gateway will decline and submit → Expected: A clear "payment declined" message is shown; the card fields remain editable for retry.
   2. Observe the order state → Expected: No order confirmation appears; the user stays on the Payment step; the cart still holds the same items.
 
-### Checkout — removing the last cart item blocks proceeding
+### Removing the last cart item blocks proceeding to checkout
 - Priority: medium
 - Behavior: destructive
 - Tags: checkout, cart
@@ -48,7 +49,7 @@ Maps onto QA Vault fields: the `###` heading → `title`; `Priority`/`Behavior`/
 
 ## 2. Web — registration with email verification (expected-result richness)
 
-Title: **User registers a new account and verifies it via email**
+Title: **Register a new account and verify it via email**
 Behavior: positive · Priority: high · Tags: authentication
 
 Steps (abridged — note how each expected result captures everything visible to the tester):

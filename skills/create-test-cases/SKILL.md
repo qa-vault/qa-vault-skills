@@ -40,7 +40,7 @@ Single create, bulk create, and a simple single edit (`update_test_case`) are al
 
 Set **exactly** these:
 
-- **`title`** — `[Goal] + [Context] + [Outcome]`, e.g. "Checkout — pay with a valid card and reach order confirmation". Not "Test checkout".
+- **`title`** — describe the **scenario only**: `[Context] + [Action] + [Outcome]` (e.g. "Sign in with valid credentials and reach the projects page"). **No suite/module-name prefix** — don't write "Login — sign in…": the case already lives in a suite and carries tags, so the module context is redundant in nearly every view. Avoid generic titles like "Test login".
 - **`description`** — one or two sentences on what the scenario verifies.
 - **`preconditions`** — **only if non-obvious** (specific state / data / permissions). Skip the obvious ("user is logged in").
 - **`steps`** — each `{action, expected_result}`, grounded in the real UI (real labels/fields/flows, not invented — see *Ground every case in the real implementation*). The `expected_result` carries **everything a manual tester verifies through the UI**: UI changes, validations, data persistence, visible side-effects. **No backend detail** — no endpoints, status codes, table names, or logs.
