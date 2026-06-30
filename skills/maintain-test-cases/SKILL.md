@@ -17,7 +17,7 @@ Like `create-test-cases`, you do **not** write to the vault until the engineer a
 2. **Find affected cases.** Search **broadly** — a change usually ripples past the obvious area (a new 2FA login step also touches password-reset, remember-me, and any case asserting "reaches the dashboard"). Use semantic + title search; pull candidates and **read each one with `get_test_case` before deciding** — never edit step text you haven't read.
 3. **Stage the changeset in `qa-vault/`.** Write the proposed changes as a Markdown draft (same `qa-vault/` folder = suite, file = set format as `create-test-cases`), showing per case what changes: edited steps, new cases, removals — and why.
 4. **Review & approve.** Present the changeset, surface anything ambiguous (is this case really affected? is it in scope?), and iterate until the engineer approves.
-5. **Apply, then report & clean up.** Make the approved changes, report the changeset (ids updated / created / deleted), and delete the draft.
+5. **Apply, then report; clean up on confirmation.** Make the approved changes and report the changeset (ids updated / created / deleted). Deleting the draft is destructive — **ask before removing it and only delete on explicit confirmation**; never auto-delete.
 
 ## The changeset has three kinds of action
 

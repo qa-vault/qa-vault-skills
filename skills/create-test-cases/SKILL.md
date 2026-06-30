@@ -32,7 +32,7 @@ QA Vault is the source of truth, but cases are **reviewed and approved by the en
 4. **Draft into `qa-vault/`** — **one draft file per (sub-)suite** from the agreed structure. Write under a `qa-vault/` folder at the **project root** (create it if absent). **Folder = a suite** (nested suites → nested folders); **file = a set of cases**; each case is a block with its full fields (below). This is the review artifact — not the vault.
 5. **Review & approve.** The engineer reviews and edits the draft; iterate until they approve. Surfacing these choices *is* the point of the skill — don't decide silently.
 6. **Transfer.** On approval, write to QA Vault: `create_test_case` for one, `bulk_create_test_cases` for many (max 100 per call). Create the suites/sub-suites (`create_test_suite`) to match the agreed structure.
-7. **Report & clean up.** Report the created `case_id`s and where they landed, then **delete** the draft files — once in the vault they are done (remove, don't keep).
+7. **Report, then clean up on confirmation.** Report the created `case_id`s and where they landed. The drafts have served their purpose once everything is in the vault — but **deleting them is destructive, so ask the engineer first and only remove the draft files on explicit confirmation** (they may want to keep or re-check them). Never auto-delete.
 
 Single create, bulk create, and a simple single edit (`update_test_case`) are all valid — pick what fits.
 
