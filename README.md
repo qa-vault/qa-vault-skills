@@ -17,6 +17,8 @@ QA and QA-adjacent engineers who use an MCP-capable AI agent (Claude Code / Code
 
 ## Install
 
+`qa-vault-skills` is distributed through the `qa-vault` marketplace catalog. Installing it is **self-contained** — you do not need any other `qa-vault` plugin (such as `codelore`) installed first. Pick the section for your tool.
+
 ### Claude Code
 
 1. **Add the marketplace** (one-time):
@@ -25,11 +27,18 @@ QA and QA-adjacent engineers who use an MCP-capable AI agent (Claude Code / Code
    /plugin marketplace add qa-vault/marketplace
    ```
 
+   This fetches the catalog of `qa-vault` plugins from GitHub — no code is installed yet. (If you already added it for another `qa-vault` plugin, skip this step.)
+
 2. **Install the plugin**:
 
    ```
    /plugin install qa-vault-skills@qa-vault
    ```
+
+   Claude Code will ask where to install:
+   - **User** — available in every project on your machine (recommended for personal use)
+   - **Project** — only active in this project, shared with teammates via `.claude/settings.json`
+   - **Local** — only for you, only in this project
 
 3. **Verify** — type `/` and you should see `search-test-cases`, `create-test-cases`, `maintain-test-cases`, and `organize-test-repository` (each annotated `(qa-vault-skills)`).
 
@@ -37,7 +46,29 @@ QA and QA-adjacent engineers who use an MCP-capable AI agent (Claude Code / Code
 
 ### Codex CLI
 
-Codex discovers the skills from this plugin's `skills/` directory via the `qa-vault/marketplace` catalog. Add the marketplace and install `qa-vault-skills`, then the four skills are available in your Codex sessions.
+Codex has its own plugin marketplace system; the flow mirrors Claude Code's and is fully independent of any other plugin.
+
+> **Requires Codex CLI 0.122+.** The `url` source variant this catalog uses shipped in stable 0.122 (2026-04-20); earlier 0.121.x releases accept only `local` plugin sources. Upgrade to 0.122 or later.
+
+1. **Add the marketplace** (one-time):
+
+   ```
+   codex plugin marketplace add qa-vault/marketplace
+   ```
+
+   (If you already added it for another `qa-vault` plugin, skip this step.)
+
+2. **Install the plugin** — inside Codex, open the plugin browser:
+
+   ```
+   /plugins
+   ```
+
+   Find `qa-vault-skills` under the `qa-vault` marketplace and toggle it on to install. (`/plugins` is an interactive browser — it does not accept inline arguments.)
+
+3. **Verify** — type `$` in the Codex composer to open the skill-mention popup; `search-test-cases`, `create-test-cases`, `maintain-test-cases`, and `organize-test-repository` should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's `description`.
+
+**Updates:** refresh with `codex plugin marketplace upgrade qa-vault` periodically.
 
 ---
 
