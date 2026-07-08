@@ -22,19 +22,38 @@ Scenarios must describe what is **actually built**, never a hypothetical UI. Gat
 
 **Do not invent** button labels, providers, fields, or flows. Where the docs and the code disagree, the **running code wins** (docs drift) — note the discrepancy. If you can't verify how something works from either, **flag the assumption** for the engineer instead of guessing. Every step and expected result must be behavior that is implemented and observable in the real UI.
 
-## The process: explore → propose structure → draft → review → transfer (never write straight to the vault)
+## The process: explore → propose structure → draft → validate → review → transfer (never write straight to the vault)
 
 QA Vault is the source of truth, but cases are **reviewed and approved by the engineer before they land there**. **Do not call `create_test_case` / `bulk_create_test_cases` until an approved draft exists.**
 
-1. **Gather context — QA Vault *and* the real product.** On the QA Vault side: resolve the project (`list_projects`), pull the tag vocabulary (`list_tags`) and the suite layout (`list_test_suites`). On the product side: **read the project docs, then explore the actual implementation** for the scope (per "Ground every case in the docs, then the real implementation" above) so the scenarios reflect what's built and you understand how the app is structured. If the feature details are too thin to write meaningful scenarios, ask rather than invent coverage.
+1. **Gather context — QA Vault *and* the real product.** On the QA Vault side: resolve the project (`list_projects`), pull the tag vocabulary (`list_tags`) and the suite layout (`list_test_suites`). On the product side: **read the project docs, then explore the actual implementation** for the scope (per "Ground every case in the docs, then the real implementation" above) so the scenarios reflect what's built and you understand how the app is structured. If the feature details are too thin to write meaningful scenarios, ask rather than invent coverage. While exploring the implementation, also note anything suspicious as you pass it (see *Validation: flag suspicious behavior* below) — you'll sweep for these after drafting.
 2. **Search first (dedupe).** Before authoring, search existing cases for overlap (semantic + title — see the `search-test-cases` modes). Surface near-duplicates and let the engineer choose: new / update existing / skip.
 3. **Propose the suite structure — semantic-first.** Shape the suite/sub-suite breakdown around the **application's semantic structure** — its domains and conceptual map, as revealed by the docs and the app's own information architecture / navigation — **not merely a flat list of functional areas**. Think "how is this product meaningfully organized?", with functional groupings living *within* that semantic structure. When the scope spans distinct semantic areas, **propose the breakdown in chat and get a confirm before drafting** — don't collapse distinct areas into one suite/file. The agreed structure (existing suites + any new sub-suites) determines the draft folders and files.
 4. **Draft into `qa-vault/`** — **one draft file per (sub-)suite** from the agreed structure. Write under a `qa-vault/` folder at the **project root** (create it if absent). **Folder = a suite** (nested suites → nested folders); **file = a set of cases**; each case is a block with its full fields (below). This is the review artifact — not the vault.
-5. **Review & approve.** The engineer reviews and edits the draft; iterate until they approve. Surfacing these choices *is* the point of the skill — don't decide silently.
-6. **Transfer.** On approval, write to QA Vault: `create_test_case` for one, `bulk_create_test_cases` for many (max 100 per call). Create the suites/sub-suites (`create_test_suite`) to match the agreed structure.
-7. **Report, then clean up on confirmation.** Report the created `case_id`s and where they landed. The drafts have served their purpose once everything is in the vault — but **deleting them is destructive, so ask the engineer first and only remove the draft files on explicit confirmation** (they may want to keep or re-check them). Never auto-delete.
+5. **Validation sweep.** Before presenting the drafts, re-read them against what you observed in the code: attach a `⚠️ VALIDATE` line (format below) to each case whose implemented behavior you noted as suspicious during exploration, and look across the drafts for cross-case inconsistencies (e.g., two screens handling the same situation differently). See *Validation: flag suspicious behavior*.
+6. **Review & approve.** The engineer reviews and edits the draft; iterate until they approve. Surfacing these choices *is* the point of the skill — don't decide silently. Alongside the drafts, present a **validation summary** in chat: each flagged case (title, draft file, one-line suspicion), plus a short *General observations* list for suspicious things you saw that didn't map to any drafted case. **Do not transfer while any flag is unresolved** — for each flag the engineer explicitly decides: valid as-is / modify the case / remove the case / it's a real bug (they handle filing and choose whether the case then encodes the intended behavior or is dropped). A blanket "drafts approved" does **not** resolve flags: get a per-flag decision, or an explicit "all flags approved as valid", before calling any create tool.
+7. **Transfer.** On approval, write to QA Vault: `create_test_case` for one, `bulk_create_test_cases` for many (max 100 per call). Create the suites/sub-suites (`create_test_suite`) to match the agreed structure.
+8. **Report, then clean up on confirmation.** Report the created `case_id`s and where they landed. The drafts have served their purpose once everything is in the vault — but **deleting them is destructive, so ask the engineer first and only remove the draft files on explicit confirmation** (they may want to keep or re-check them). Never auto-delete.
 
 Single create, bulk create, and a simple single edit (`update_test_case`) are all valid — pick what fits.
+
+## Validation: flag suspicious behavior
+
+The implementation you ground scenarios in **may itself contain bugs** — drafting often happens before the engineer has manually explored the shipped feature, so you are the first pair of eyes. Flag **implemented, verifiable behavior a competent QA engineer would pause at**. You are not claiming "bug"; you are saying "confirm this is intended before it becomes an expected result." Three kinds:
+
+- **Suspicious functional logic** — behavior inconsistent between screens/flows of the same app; surprising edge handling (silent data loss or truncation, odd limits); state that unexpectedly doesn't persist.
+- **Non-functional nuances visible in the UI** — no feedback on slow operations; missing loading/empty/error states; unbounded lists.
+- **Questionable UX decisions** — destructive actions without confirmation; misleading labels; dead-end flows; deviations from platform conventions or the app's own patterns.
+
+**Keep flags few and high-signal**: each names a concrete observed behavior and why it's suspicious — no style opinions, no speculation. If everything is flagged, nothing is. This is not the "flag the assumption" rule (that covers *missing* evidence); a validation flag marks evidence you **have** that looks wrong. "The devs confirmed it's final" or "the engineer is in a hurry" is never a reason to skip a flag — deciding is the engineer's job, noticing is yours. A flagged case's steps still describe the **implemented** behavior (code wins) until the engineer rules otherwise.
+
+Mark a flagged case with one additive bullet in its draft block:
+
+```
+- ⚠️ VALIDATE: <observed behavior> — <why it looks suspicious>
+```
+
+Flags are **draft-only**: never carry a `⚠️ VALIDATE` line — or any trace of it — into the vault.
 
 ## Fields to set on every case
 
@@ -76,6 +95,7 @@ Each case block in a `qa-vault/<suite>/<set>.md` file:
 - Steps:
   1. <action> → Expected: <everything the tester verifies through the UI>
   2. ...
+- ⚠️ VALIDATE: <only when flagged — observed behavior + why it looks suspicious>
 ```
 
 `automation: not_automated` applies to every case — don't repeat it per block. For full worked scenarios (mobile / web / admin / e-commerce) and an example mapped directly onto the QA Vault fields, see [references/scenario-examples.md](references/scenario-examples.md).
