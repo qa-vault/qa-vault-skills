@@ -3,7 +3,7 @@
 Four skills that make an AI agent a competent **QA practitioner** for the **QA Vault** platform — an MCP-native test-management product. With the QA Vault MCP connected, these skills let a QA engineer author, maintain, search, and organize manual UI test cases through their AI agent, with a human review-and-approve loop and QA Vault as the single source of truth.
 
 - **`search-test-cases`** — find existing cases: the four QA Vault search modes (title, filtered, semantic, related) and when to use each. Read-only.
-- **`create-test-cases`** — author manual UI end-to-end scenarios from a spec, ticket, code, or conversation. Drafts for review, then writes to the vault.
+- **`create-test-cases`** — author manual UI end-to-end scenarios from a spec, ticket, code, or conversation. Drafts for review — flagging suspicious implemented behavior (possible bugs) for the engineer to resolve — then writes to the vault.
 - **`maintain-test-cases`** — keep the repository in sync after development changes: update stale cases, add new coverage, remove what's obsolete — in one reviewed changeset.
 - **`organize-test-repository`** — restructure and clean up suites, tags, and case order; audit for sprawl and duplicates.
 
