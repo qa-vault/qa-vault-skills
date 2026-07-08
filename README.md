@@ -2,6 +2,8 @@
 
 Four skills that make an AI agent a competent **QA practitioner** for the **QA Vault** platform — an MCP-native test-management product. With the QA Vault MCP connected, these skills let a QA engineer author, maintain, search, and organize manual UI test cases through their AI agent, with a human review-and-approve loop and QA Vault as the single source of truth.
 
+The content skills (`create-test-cases`, `maintain-test-cases`) include a **validation phase**: while grounding cases in the real implementation, the agent flags implemented-but-suspicious behavior — possible bugs in product logic or UX — with a `⚠️ VALIDATE` note in the draft, and nothing is written to the vault until the engineer explicitly resolves every flag. Test authoring often happens before anyone manually explores the shipped feature, so these flags catch potential bugs at the cheapest moment.
+
 - **`search-test-cases`** — find existing cases: the four QA Vault search modes (title, filtered, semantic, related) and when to use each. Read-only.
 - **`create-test-cases`** — author manual UI end-to-end scenarios from a spec, ticket, code, or conversation. Drafts for review — flagging suspicious implemented behavior (possible bugs) for the engineer to resolve — then writes to the vault.
 - **`maintain-test-cases`** — keep the repository in sync after development changes: update stale cases, add new coverage, remove what's obsolete — in one reviewed changeset, flagging suspicious changed behavior (possible regressions) for the engineer to resolve.
@@ -77,8 +79,8 @@ Codex has its own plugin marketplace system; the flow mirrors Claude Code's and 
 | Skill | Use it when | Writes? |
 |-------|-------------|---------|
 | `search-test-cases` | You need to find existing cases, or check coverage before authoring. | No (read-only) |
-| `create-test-cases` | You're authoring new manual UI test scenarios. | Via review draft → vault |
-| `maintain-test-cases` | Development changed and the tests need to catch up. | Via review draft → vault |
+| `create-test-cases` | You're authoring new manual UI test scenarios. | Via review draft + flag resolution → vault |
+| `maintain-test-cases` | Development changed and the tests need to catch up. | Via review draft + flag resolution → vault |
 | `organize-test-repository` | You're restructuring or cleaning up suites/tags/cases. | After chat-preview confirm |
 
 ## License
