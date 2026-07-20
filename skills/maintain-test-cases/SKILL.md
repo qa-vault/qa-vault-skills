@@ -68,7 +68,7 @@ The changed implementation **may itself contain bugs** — maintenance runs righ
 
 ## Preserve automation status
 
-A case's `automation` value (`not_automated` / `to_be_automated` / `automated`) reflects engineering reality you can't see from here. **Never silently change it.** When you edit an already-`automated` case, leave `automation` as-is (don't pass the field) and **flag it** to the engineer: a redesign can break the existing automated test's locators even when behavior is unchanged, so they should confirm whether it still passes. Change `automation` only on explicit instruction.
+A case's `automation` value (`not_automated` / `to_be_automated` / `automated`) reflects engineering reality you can't see from here. **Never silently change it.** When you edit an already-`automated` case, leave `automation` as-is (don't pass the field) and **flag it** to the engineer: a redesign can break the existing automated test's locators even when behavior is unchanged, so they should confirm whether it still passes. When such a case has an `automation_ref`, include it in the flag — that is the spec whose locators may now be stale; healing it is `heal-automated-tests`' job, not this skill's. Change `automation` only on explicit instruction.
 
 ## Discipline
 
