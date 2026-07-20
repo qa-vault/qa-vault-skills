@@ -40,7 +40,7 @@ batch. Nothing is auto-included.
 ### 2. Prepare
 
 - **`get_project_rules` first** — per QA Vault MCP guidance, before any substantive work in the
-  project.
+  project; the `project` code comes from AUTOMATION.md's **QA Vault project** section.
 - **`get_test_case`** for each target — read the full steps, not the title.
 - Read **`e2e/AUTOMATION.md`** and **only the relevant `e2e/APP-MAP.md` sections** for the areas
   in scope.
@@ -50,6 +50,8 @@ batch. Nothing is auto-included.
 Per case, before touching the browser:
 
 - **No email round-trips**; no third-party UIs the project can't control.
+- **Off-limits, per AUTOMATION.md** — a case whose flow enters an off-limits area (payments, real-
+  user emails, banned third-party surfaces) is declined with that reason, never driven anyway.
 - **≤ ~15 steps.** A longer case → **API-seeded preconditions** per AUTOMATION.md's seeding
   strategy when the excess steps are setup (seed the state so the spec starts closer to the
   behavior under test), or **propose splitting** when the case genuinely holds two scenarios.
@@ -61,8 +63,9 @@ Per case, before touching the browser:
 If APP-MAP already covers the case's UI area, **skip straight to authoring**. Otherwise walk the
 case's flow **exactly once** via the attach loop in
 [references/cli-mechanics.md](references/cli-mechanics.md), harvesting locators and exact
-text/values as you go, and **append every fact learned to APP-MAP.** The cost is paid **once per
-UI area, not once per case** — the next case in the same area reads the map instead of the browser.
+text/values as you go, and **append every fact learned to APP-MAP; a fact that contradicts an
+existing entry replaces it.** The cost is paid **once per UI area, not once per case** — the next
+case in the same area reads the map instead of the browser.
 
 ### 5. Author the spec
 
@@ -100,7 +103,8 @@ Transcribe the case's steps into a spec. Rules:
   `automation_ref: "<repo-relative spec path>"`. They are **independent fields** — setting the
   ref never flips the status and clearing the status never clears the ref, so always set both
   explicitly.
-- **Append** every session discovery to APP-MAP.
+- **Append** every session discovery to APP-MAP; a fact that contradicts an existing entry replaces
+  it.
 - **Report the changeset:** specs created, cases updated, cases declined + why.
 
 **Specs land uncommitted for engineer review — this skill never commits.**

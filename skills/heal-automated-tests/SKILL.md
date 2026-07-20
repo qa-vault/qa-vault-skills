@@ -70,7 +70,8 @@ force green.**
 ### 4. Close
 
 - **Rerun each fixed spec to green**, then the **affected suite once** at the very end.
-- **Append every new page fact** discovered while inspecting to APP-MAP.
+- **Append every new page fact** discovered while inspecting to APP-MAP; a fact that contradicts an
+  existing entry replaces it.
 - **Report verdict-by-verdict:** each failure, its verdict, and its exit (spec fixed / case + spec
   re-derived / defect filed + `fixme` / flake).
 

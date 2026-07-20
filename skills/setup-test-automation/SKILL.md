@@ -29,6 +29,7 @@ Inspect the repo before asking anything: package manager (from the lockfile), an
 
 For **every** question: first inspect the repo and the running app, then **recommend the option you judge right for this project, with your argumentation** — the engineer confirms or overrides. Never present a bare checklist.
 
+- **QA Vault project** — which QA Vault project this repo's cases live under. Recommend from `list_projects` when the MCP is reachable; when several projects map to this repo, capture each with its area.
 - **Base URL + run command** — the URL the app serves on and the command that starts it.
 - **Auth model** — a dedicated test account with reusable storage state (the recommended default), programmatic vs UI login, or unauthenticated when the app has no login.
 - **Test-data strategy** — can tests hit a seeding API or script, or is it UI-only? **Unique-prefix naming** for everything a test creates (default prefix `e2e-` plus a per-run suffix). Cleanup policy — each test removes what it created.
@@ -64,7 +65,7 @@ Created here, maintained by every later session:
 | File | Purpose |
 |---|---|
 | `playwright.config.ts` | baseURL, auth setup project + `storageState`, `webServer`, agent-run reporter/retry defaults |
-| `e2e/AUTOMATION.md` | project policy: test-data prefix + cleanup, seeding strategy, auth model, run commands, off-limits areas |
+| `e2e/AUTOMATION.md` | project policy: QA Vault project, test-data prefix + cleanup, seeding strategy, auth model, run commands, off-limits areas |
 | `e2e/APP-MAP.md` | append-forever knowledge base: per-area known-good locators, empirical quirks, navigation facts |
 | `e2e/tests/auth.setup.ts` | signs in once, writes the storage state the main project reuses |
 | `e2e/tests/fixtures.ts` | auth/navigation fixtures specs import instead of raw `@playwright/test` |

@@ -23,7 +23,7 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
 ### 1. Scope
 
 - **`get_project_rules` first** — per QA Vault MCP guidance, before any substantive work in the
-  project.
+  project. The `project` code comes from AUTOMATION.md's **QA Vault project** section.
 
 Three input shapes: **all automated cases** (cases at `automation: automated`), **a suite**
 (resolve it to its cases), or **the specs matching a QA Vault run template**. When the caller gives
@@ -34,9 +34,18 @@ unbounded run unasked.
 `// qa-vault: project=<code> case=<case_id>`, so a grep across `e2e/tests/` maps each spec to its
 case and each in-scope case to its spec, in both directions.
 
-**A case whose spec file is missing — moved or deleted — is reported, never silently dropped.** It
-is in scope but has no artifact to run; surface the gap in the report rather than letting it vanish
-from the results.
+**Version-drift check.** Fetch the in-scope cases' current versions in one `list_test_cases` call
+(`fields: ["id", "version"]`, automation filter as relevant) and compare each against its spec's
+provenance-header `v<version>`. A spec whose header version lags the case's current version is
+reported as **STALE** — it still runs and records (it may still be valid), but the report lists it as
+a re-derivation candidate for `automate-test-cases`.
+
+**A case whose spec file is missing — moved or deleted — is reported, never silently dropped** (fix:
+update the case's `automation_ref`, or restore/relocate the spec). It is in scope but has no artifact
+to run; surface the gap in the report rather than letting it vanish from the results.
+
+**A spec whose provenance-header case no longer exists in the vault — deleted — is reported as
+orphaned.** It does not run and no result is recorded for it.
 
 ### 2. Execute
 
@@ -70,6 +79,9 @@ from the results.
   **not** block completion once everything runnable has executed.
 
 ### 4. Hand off
+
+**STALE specs (Scope) are listed as re-derivation candidates for `automate-test-cases`** — a spec
+whose header version lags its case's current version, surfaced for the engineer to decide on.
 
 Real failures needing repair are queued as **explicit input for `heal-automated-tests`** — a list,
 **one line each: `<file>:<line>` + one-line error summary.** This skill records; it does not fix.

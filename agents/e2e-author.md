@@ -36,6 +36,9 @@ missing in the target repo, stop immediately and report back that the contract i
 and the engineer must run `setup-test-automation`. Never improvise a partial contract or
 proceed without it.
 
+**One session per repo:** do not run multiple harness sessions or agents against the same
+repo concurrently — their APP-MAP edits and test-data prefixes collide.
+
 **No commits:** specs and contract edits land uncommitted for engineer review. Never
 `git add` or `git commit`.
 

@@ -95,7 +95,9 @@ export default defineConfig({
 Signs in **once** and saves the session so every later test starts authenticated. Prefer the
 programmatic path (Option B) when the app exposes an auth API — it is faster and less flaky;
 otherwise drive the real login UI (Option A). Either way, `.auth/user.json` holds a live
-session and **must be gitignored** (see template 7).
+session and **must be gitignored** (see template 7). **Credentials never land in committed code** —
+they live in the shell/CI env (a gitignored `.env.e2e` loaded by the engineer's shell, or CI
+secrets), read here as `E2E_EMAIL` / `E2E_PASSWORD`.
 
 ```ts
 import { test as setup, expect } from "@playwright/test";
@@ -103,10 +105,15 @@ import { test as setup, expect } from "@playwright/test";
 const authFile = "e2e/.auth/user.json";
 
 setup("authenticate", async ({ page }) => {
+  // Credentials come from the environment, never from committed code.
+  if (!process.env.E2E_EMAIL || !process.env.E2E_PASSWORD) {
+    throw new Error("Set E2E_EMAIL and E2E_PASSWORD in your shell/CI env before running auth setup.");
+  }
+
   // OPTION A — real UI login (works for any app).
   await page.goto("<login-path>"); // e.g. /login
-  await page.getByLabel("<email-label>").fill("<test-email>");
-  await page.getByLabel("<password-label>").fill("<test-password>");
+  await page.getByLabel("<email-label>").fill(process.env.E2E_EMAIL!);
+  await page.getByLabel("<password-label>").fill(process.env.E2E_PASSWORD!);
   await page.getByRole("button", { name: "<submit-label>" }).click();
   // Wait on a signed-in signal, never on a fixed timeout.
   await expect(page.getByRole("<signed-in-marker-role>", { name: "<signed-in-marker>" })).toBeVisible();
@@ -114,7 +121,7 @@ setup("authenticate", async ({ page }) => {
   // OPTION B — programmatic login when the app exposes an auth API (delete Option A above).
   // page.request shares the browser context's cookie jar, so storageState still captures it.
   // const res = await page.request.post("<auth-api-path>", {
-  //   data: { email: "<test-email>", password: "<test-password>" },
+  //   data: { email: process.env.E2E_EMAIL!, password: process.env.E2E_PASSWORD! },
   // });
   // expect(res.ok()).toBeTruthy();
 
@@ -176,13 +183,18 @@ the decided policy.
 Project-specific automation policy for AI agents. Set once via the `setup-test-automation`
 interview; edited rarely. Every automation skill reads this before touching the app.
 
+## QA Vault project
+<!-- The QA Vault project code this repo's cases live under.
+     e.g. Cases live in project `<CODE>`; when several projects map to this repo, list each with its area. -->
+
 ## Test data
 <!-- Unique-prefix naming for everything a test creates + cleanup policy.
      e.g. Every entity name is prefixed `e2e-` plus a per-run suffix; each test deletes what it created. -->
 
 ## Auth
 <!-- The auth model: test account + reusable storage state, or unauthenticated.
-     e.g. Signed in via e2e/tests/auth.setup.ts -> e2e/.auth/user.json; test account credentials in <where>. -->
+     e.g. Signed in via e2e/tests/auth.setup.ts -> e2e/.auth/user.json; credentials from
+     E2E_EMAIL / E2E_PASSWORD in the shell/CI env, never committed. -->
 
 ## Seeding
 <!-- How preconditions are established: seeding API/script vs UI-only.
@@ -219,6 +231,8 @@ Each area section holds three kinds of entry:
   3. Navigation rules — plain prose: how to reach the area, order-of-operations facts.
 
 APPEND after every session that learned a page fact this file did not already have.
+When a newly observed fact CONTRADICTS an existing entry (a locator no longer matches, a quirk is
+gone), REPLACE that entry — this file states current truth, not history.
 NEVER paste raw `.playwright-cli/` artifacts (snapshots, screenshots, logs) here — those are
 ephemeral, gitignored working files. A snapshot says what the page looked like at one moment;
 this file says which locator to use and what traps exist there.
