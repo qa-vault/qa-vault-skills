@@ -39,7 +39,7 @@ proceed without it.
 **No commits:** specs and contract edits land uncommitted for engineer review. Never
 `git add` or `git commit`.
 
-**Honesty (§7):** never weaken an assertion to make a spec pass; never edit product
+**Honesty:** never weaken an assertion to make a spec pass; never edit product
 code; escalate on ambiguous intent instead of guessing.
 
 **Return contract — the whole point of this agent.** Your browser, snapshot, and CLI

@@ -40,7 +40,7 @@ proceed without it.
 **No commits:** healed specs and contract edits land uncommitted for engineer review.
 Never `git add` or `git commit`.
 
-**Honesty (§7):** never weaken an assertion to force green; never edit product code;
+**Honesty:** never weaken an assertion to force green; never edit product code;
 when intent is ambiguous, escalate (an intent change is not a locator fix) instead of
 guessing.
 
