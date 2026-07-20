@@ -8,5 +8,5 @@
   },
   "license": "MIT",
   "repository": "https://github.com/qa-vault/qa-vault-skills",
-  "keywords": ["qa", "test-management", "test-cases", "mcp", "qa-vault", "manual-testing"]
+  "keywords": ["qa", "test-management", "test-cases", "mcp", "qa-vault", "manual-testing", "playwright", "e2e", "test-automation"]
 }

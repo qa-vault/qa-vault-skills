@@ -43,7 +43,7 @@ Generate the artifacts from [references/scaffold-templates.md](references/scaffo
 ### 4. Verify — prove the whole toolchain before any authoring
 
 1. Run the seed test headless to **green**: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts`.
-2. One `--debug=cli` attach round-trip so the agent path is proven end to end: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli`, then `playwright-cli attach <session>` and `resume` — the seed test then finishes and the session ends on its own.
+2. One `--debug=cli` attach round-trip so the agent path is proven end to end. Run it in the **background** — `--debug=cli` pauses the test and holds the process open, so a foreground shell blocks: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli`. Wait for the *Debugging Instructions* + session name, `playwright-cli attach <session>`, then **prove the paused page is drivable**: the pause is at the test's start on `about:blank`, and the auth-setup dependency pauses first — `resume` to the seed test's own pause, `step-over` past the fixture navigation onto the authenticated app root, and one `find`/snapshot confirms it. Then `resume` releases the session — the seed test finishes and the session ends on its own.
 
 If either step is red, fix the scaffold before handing off — a broken bootstrap breaks every skill downstream.
 

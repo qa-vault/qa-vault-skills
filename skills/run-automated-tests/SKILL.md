@@ -59,7 +59,7 @@ from the results.
 - **`create_test_run`** with **`origin: "automated"`**, the `project` code, the in-scope
   `case_ids` (or `template_id`), and title following the convention **`Automated <scope> <date>`**
   (e.g. `Automated smoke-suite 2026-07-20`).
-- **`bulk_record_results`** with one entry per executed case — `case_id`, `status`, `comment`:
+- **`bulk_record_results`** with one entry per in-scope case whose spec ran or was deliberately not run (`fixme`/skip) — flake and missing-spec cases stay excluded — each with `case_id`, `status`, `comment`:
   - **`passed`** / **`failed`** per the outcome; every failure's **`comment` = one-line error
     summary + trace pointer** (`<file>:<line> — <assertion/error>; trace: <report or trace path>`).
   - A spec marked **`test.fixme()` over an open defect** → **`blocked`**, comment = the defect

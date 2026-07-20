@@ -63,11 +63,15 @@ Two thin subagents live in `agents/` — **Claude Code only**. `e2e-author` wrap
 
 ## Operating discipline (embedded in every skill)
 
+The **manual QA family** embeds these five rules:
+
 1. Propose-then-act (preview before any consequential write; content skills do this via the `qa-vault/` review draft).
 2. Search-before-create (dedupe before authoring).
 3. Surface ambiguous decisions instead of silently guessing.
 4. Ask for missing context instead of fabricating.
 5. Report results (ids, locations, counts).
+
+The **e2e automation family** carries its own stamped *Discipline* block — Context, Iteration, Locators, Waits, Data, Honesty, Screenshots, Models — repeated verbatim at the foot of each automation skill.
 
 **No role/permission language** appears in any skill — that is a platform access-control concern and drift-prone. **No enum catalogs** are restated — agents call `get_field_options` for live values.
 

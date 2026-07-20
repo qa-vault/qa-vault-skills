@@ -74,6 +74,8 @@ force green.**
 - **Report verdict-by-verdict:** each failure, its verdict, and its exit (spec fixed / case + spec
   re-derived / defect filed + `fixme` / flake).
 
+**Healed specs land uncommitted for engineer review — this skill never commits.**
+
 **Anti-false-healing warning:** retargeting a similar element to force a spec green **masks
 regressions.** When an element's accessible **name or role changed meaning** — not just its
 selector — that is an **intent change**, not a locator fix: the app's contract moved, so the case

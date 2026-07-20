@@ -10,16 +10,37 @@ Commands assume `@playwright/cli` ≥ 0.1.16 (see §7 for the fallback).
 ## 1. Attach to the seeded app
 
 Never open the app URL directly — the seed test brings up **live fixtures and a signed-in
-session**; a raw `goto` has neither. Attach to the paused seed test instead:
+session**; a raw `goto` has neither. Attach to the paused seed test instead.
+
+**Run the debug session in the BACKGROUND.** `--debug=cli` pauses the test and holds the process
+open until you resume it — a foreground shell blocks on that pause and never reaches `attach`.
 
 ```bash
-PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli
-# wait for "Debugging Instructions" + a session name like tw-XXXX
+# launch in the background, then read its output for the attach line:
+PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli &
+# wait for "Debugging Instructions" + a session name like tw-XXXX, then:
 playwright-cli attach tw-XXXX
-playwright-cli resume
 ```
 
-The session lands on the app root, authenticated and ready to drive.
+The test is paused at its **start, on `about:blank`** — *before* the fixture's `goto`, so nothing
+is on screen yet; it is **not** already on the app root. The seed depends on the auth-setup
+project, so **that** test pauses first; `resume` it and the seed test then pauses at its own start
+and prints a fresh attach line — attach to that one. From the seed's pause, **`step-over` past the
+fixture navigation** lands the page on the authenticated app root, now live and drivable:
+
+```bash
+playwright-cli step-over          # advance past the fixture's goto("/") → authenticated app root
+playwright-cli find "<text>"      # observe/drive the paused live page (§2)
+```
+
+Drive the flow from this paused state (§2–§4). When the walk is done, **`resume` releases the
+session** — the test runs to completion, and when the run's last test finishes the process exits
+and the session ends on its own.
+
+`--debug=cli` on a specific `<file>:<line>` (as heal attaches at a failure, §2 of that skill) uses
+`<file>:<line>` as the standard Playwright **test filter** — it selects *which* test runs; the
+pause is still at that test's start on `about:blank`, exactly as above. It does **not** teleport
+execution to that line.
 
 ## 2. Observe without polluting context
 
