@@ -24,6 +24,32 @@ e2e/
 
 ---
 
+## 0. Install / verify the toolchain
+
+Install both dev dependencies, then the Chromium browser Playwright drives:
+
+```bash
+# npm
+npm install -D @playwright/test @playwright/cli
+# pnpm
+pnpm add -D @playwright/test @playwright/cli
+# yarn
+yarn add -D @playwright/test @playwright/cli
+
+npx playwright install chromium
+```
+
+Verify the versions before scaffolding (contract floors: `@playwright/test` ≥ 1.60,
+`@playwright/cli` ≥ 0.1.16):
+
+```bash
+npx playwright --version         # @playwright/test
+playwright-cli --version         # global CLI; if that command is absent:
+npx playwright cli --version     # fallback through npx
+```
+
+---
+
 ## 1. `playwright.config.ts`
 
 Root config. `testDir` is `e2e/tests`; the `setup` project signs in once and the main project
@@ -57,7 +83,7 @@ export default defineConfig({
   webServer: {
     command: "<dev-server-command>", // e.g. npm run dev
     url: "<base-url>", // the URL Playwright waits for before running
-    reuseExistingServer: true, // reuse a dev server the engineer already has running
+    reuseExistingServer: !process.env.CI, // reuse a locally running dev server; always start fresh in CI
   },
 });
 ```

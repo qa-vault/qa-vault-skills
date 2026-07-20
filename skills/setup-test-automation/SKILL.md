@@ -38,12 +38,12 @@ The answers become `e2e/AUTOMATION.md`.
 
 ### 3. Scaffold
 
-Generate the artifacts from [references/scaffold-templates.md](references/scaffold-templates.md), filled with the interview answers: install/verify `@playwright/test` + `playwright-cli`; write `playwright.config.ts` (auth setup project, `storageState`, `webServer`, agent-run reporter/retry defaults), `e2e/tests/auth.setup.ts`, `e2e/tests/fixtures.ts`, `e2e/tests/seed.spec.ts`, `e2e/AUTOMATION.md`, `e2e/APP-MAP.md` (skeleton with per-area headings), and the `.gitignore` additions.
+Generate the artifacts from [references/scaffold-templates.md](references/scaffold-templates.md), filled with the interview answers: **install and verify the toolchain** (`@playwright/test`, `@playwright/cli`, Chromium); write `playwright.config.ts` (auth setup project, `storageState`, `webServer`, agent-run reporter/retry defaults), `e2e/tests/auth.setup.ts`, `e2e/tests/fixtures.ts`, `e2e/tests/seed.spec.ts`, `e2e/AUTOMATION.md`, `e2e/APP-MAP.md` (skeleton with per-area headings), and the `.gitignore` additions.
 
 ### 4. Verify — prove the whole toolchain before any authoring
 
 1. Run the seed test headless to **green**: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts`.
-2. One `--debug=cli` attach round-trip so the agent path is proven end to end: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli`, then `playwright-cli attach <session>`, `resume`, and detach.
+2. One `--debug=cli` attach round-trip so the agent path is proven end to end: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli`, then `playwright-cli attach <session>` and `resume` — the seed test then finishes and the session ends on its own.
 
 If either step is red, fix the scaffold before handing off — a broken bootstrap breaks every skill downstream.
 
@@ -66,6 +66,7 @@ Created here, maintained by every later session:
 | `playwright.config.ts` | baseURL, auth setup project + `storageState`, `webServer`, agent-run reporter/retry defaults |
 | `e2e/AUTOMATION.md` | project policy: test-data prefix + cleanup, seeding strategy, auth model, run commands, off-limits areas |
 | `e2e/APP-MAP.md` | append-forever knowledge base: per-area known-good locators, empirical quirks, navigation facts |
+| `e2e/tests/auth.setup.ts` | signs in once, writes the storage state the main project reuses |
 | `e2e/tests/fixtures.ts` | auth/navigation fixtures specs import instead of raw `@playwright/test` |
 | `e2e/tests/seed.spec.ts` | the environment bootstrap every generation/heal session attaches to |
 

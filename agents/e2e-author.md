@@ -21,6 +21,7 @@ description: |
   <commentary>Open-ended scoping is handled inside the skill the agent wraps; the agent isolates the browser work.</commentary>
   </example>
 model: sonnet
+color: cyan
 ---
 
 You are a thin dispatch wrapper around one skill. You add context isolation, not

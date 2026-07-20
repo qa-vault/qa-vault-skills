@@ -24,9 +24,11 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
 ### 1. Reproduce cheaply
 
 Run **only the failing specs**, list reporter, `PLAYWRIGHT_HTML_OPEN=never` — never the whole
-suite. Before any diagnosis, **rerun each failure once in isolation** to split flake from real: a
-spec that passes on the isolated rerun is **flake, not a failure** — it goes to the report as
-flake and is never "healed."
+suite. Before any diagnosis, **rerun each failure once in isolation.** A pass on the isolated
+rerun is **not automatically flake**: first check the original failure's signature for data/state
+collision — unique-name violations, entities from another spec, leftover records — and that
+signature means an **isolation defect**, not flake. Only a **signature-less, non-recurring**
+isolated-pass is flake — reported as flake and never "healed."
 
 ### 2. Inspect
 
@@ -34,7 +36,8 @@ Attach **at the failure**: `--debug=cli` on the failing `<file>:<line>`, then dr
 attach-and-observe loop in
 [skills/automate-test-cases/references/cli-mechanics.md](skills/automate-test-cases/references/cli-mechanics.md)
 — it lives in the automate skill's directory; the plugin ships as one tree, so the relative path
-resolves. Pull **scoped** snapshots to files, plus console and network **only as the failure
+resolves (path relative to the plugin root). Pull **scoped** snapshots to files, plus console and
+network **only as the failure
 demands** — read only the failing spec's error context, never a full-page dump into the
 conversation.
 
@@ -43,13 +46,17 @@ conversation.
 Every failure gets exactly one verdict; each verdict has one exit. Judge against the case — **never
 force green.**
 
-- **Test defect** (locator drift, timing, data collision) → **fix the spec.** Hard rules: **never
+- **Test defect** (locator drift, timing) → **fix the spec.** Hard rules: **never
   weaken an assertion to pass; never edit product code; no `waitForTimeout`/`networkidle`.**
   Re-harvest the correct locator (APP-MAP-first, role hierarchy) and fix the wait or data, keeping
   the assertion's meaning intact.
 - **Isolation defect** (the test collides with its own or a parallel run's data/state) → **fix the
   data strategy per AUTOMATION.md** — unique per-run naming, self-cleanup — **not the symptom.**
   Do not paper over a leak with a retry or a hard-coded wait.
+
+  **Test defect vs isolation defect:** reproduces on a solo rerun with clean state → **test
+  defect**; only reproduces with prior leftover state or under concurrent execution (colliding
+  names, leaked entities in the failure signature) → **isolation defect**.
 - **Intent change** (the app now deliberately behaves differently) → **the spec is not the truth,
   the case is.** Hand off to **`maintain-test-cases`** to update the manual case first, **then
   re-derive the spec from the updated case.** The provenance header keeps case↔spec identity
@@ -74,7 +81,7 @@ moves first (via `maintain-test-cases`), never the spec alone.
 
 ## Discipline
 
-Stamped, non-negotiable (spec §7):
+Stamped, non-negotiable:
 
 - **Context** — snapshots to files only, never a full-page snapshot into context; query them with
   `find`/scoped reads.

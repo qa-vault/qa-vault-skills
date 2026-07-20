@@ -5,7 +5,7 @@ the shared reference: `automate-test-cases` recon and `heal-automated-tests` ins
 attach through this loop. The rule behind every command below — **keep every observation on disk
 and out of the conversation.**
 
-Commands assume `@playwright/cli` ≥ 0.1.16 (see §6 for the fallback).
+Commands assume `@playwright/cli` ≥ 0.1.16 (see §7 for the fallback).
 
 ## 1. Attach to the seeded app
 
@@ -41,23 +41,40 @@ playwright-cli --raw eval "el => el.textContent" <ref>   # exact rendered text/v
 ```
 
 `generate-locator` output is ready to paste straight into APP-MAP and specs; `--raw eval`
-extracts the exact string or value to put in an assertion.
+extracts the exact string or value to put in an assertion. (`--raw` is a **global** flag — it
+precedes the command, as in `--raw eval`; on `generate-locator` it trails as an option instead.)
 
-## 4. Generated code is the raw material
+## 4. Drive the flow
+
+The core action verbs used while walking a case:
+
+```bash
+playwright-cli click <ref>
+playwright-cli fill <ref> "text"
+playwright-cli select <ref> "value"
+playwright-cli press <key>
+playwright-cli check <ref>          # / uncheck <ref>
+playwright-cli hover <ref>
+```
+
+The full verb list is in `playwright-cli --help`.
+
+## 5. Generated code is the raw material
 
 Each CLI action also prints the **equivalent Playwright TypeScript** for what it just did.
 **Collect these lines while walking a flow** — the spec is assembled from them, not written from
 memory. This is why recon walks the flow once: the walk itself emits the spec's body.
 
-## 5. Session hygiene
+## 6. Session hygiene
 
-- **One named session per task:** pass `-s=<name>` on each command, or export
-  `PLAYWRIGHT_CLI_SESSION=<name>`.
+- **One named session per task:** within a single attach flow the session is implicit;
+  `-s=<name>` (or exporting `PLAYWRIGHT_CLI_SESSION=<name>`) matters only when driving **multiple**
+  sessions at once.
 - **Close when done:** `playwright-cli close`.
 - **Identity swaps:** `playwright-cli state-save <file>` / `playwright-cli state-load <file>` when
   a scenario needs to switch between saved storage states.
 
-## 6. Version floor + fallback
+## 7. Version floor + fallback
 
 - Commands assume **`@playwright/cli` ≥ 0.1.16**.
 - When the global `playwright-cli` command is missing, use **`npx playwright cli <cmd>`** — the

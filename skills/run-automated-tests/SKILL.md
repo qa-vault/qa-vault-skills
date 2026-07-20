@@ -26,7 +26,9 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
   project.
 
 Three input shapes: **all automated cases** (cases at `automation: automated`), **a suite**
-(resolve it to its cases), or **the specs matching a QA Vault run template**.
+(resolve it to its cases), or **the specs matching a QA Vault run template**. When the caller gives
+**no scope**, propose **all automated cases** and **confirm before running** — never start an
+unbounded run unasked.
 
 **Resolve spec↔case pairs by grepping provenance headers** — every generated spec opens with
 `// qa-vault: project=<code> case=<case_id>`, so a grep across `e2e/tests/` maps each spec to its
@@ -40,15 +42,17 @@ from the results.
 
 - **Full scoped run**, retries per `playwright.config.ts`, **list reporter**,
   `PLAYWRIGHT_HTML_OPEN=never`. Execution is **headless via `npx playwright test`** — no
-  browser-driving needed.
-- **Rerun every failure once in isolation before classifying it.** A spec that passes on the
-  isolated rerun is **flake, not a failure.**
-- **Flake is reported as flake — never recorded as a failed result.** Only a failure that survives
-  its isolated rerun is a real failure.
-- If you must look at the live page to classify a failure, attach via
-  [skills/automate-test-cases/references/cli-mechanics.md](skills/automate-test-cases/references/cli-mechanics.md)
-  — it lives in the automate skill's directory; the plugin ships as one tree, so the relative path
-  resolves. Deeper diagnosis and repair belong to `heal-automated-tests`.
+  browser-driving needed. The resolved spec paths from **Scope** are passed as file arguments:
+  `npx playwright test <paths…>`.
+- **Rerun every failure once in isolation before classifying it.** A pass on the isolated rerun is
+  **not automatically flake**: first check the original failure's signature for data/state
+  collision — unique-name violations, entities from another spec, leftover records — and that
+  signature means an **isolation defect**, not flake. Only a **signature-less, non-recurring**
+  isolated-pass is flake.
+- **Flake is reported as flake — never recorded as a failed result.** A collision-signature
+  failure is a real failure — recorded as `failed` and queued for heal.
+- **Classification uses test output + the isolated rerun only.** Anything that needs live-page
+  inspection is `heal-automated-tests`' job, not this skill's.
 
 ### 3. Record
 
@@ -62,21 +66,22 @@ from the results.
     reference. A **Playwright-skipped** spec → **`skipped`**, comment = the skip reason.
   - **Flake gets NO recorded result** — it appears in the report as flake only.
 - **`complete_test_run`** once the scope fully executed — leave the run active if execution was
-  partial.
-- **Confirmed product bugs propagate per
-  [skills/heal-automated-tests/references/defect-propagation.md](skills/heal-automated-tests/references/defect-propagation.md)**
-  — it lives in the heal skill's directory; the plugin ships as one tree, so the relative path
-  resolves. **Link each filed defect to the run result it came from.**
+  partial. **Missing-spec cases (Scope) sit outside the executable scope** — reported, but they do
+  **not** block completion once everything runnable has executed.
 
 ### 4. Hand off
 
 Real failures needing repair are queued as **explicit input for `heal-automated-tests`** — a list,
 **one line each: `<file>:<line>` + one-line error summary.** This skill records; it does not fix.
-**The engineer decides whether healing runs now** or later — never auto-invoke it.
+**The engineer decides whether healing runs now** or later — never auto-invoke it. **Defects for
+those queued failures are filed by `heal-automated-tests`' triage** — per
+[skills/heal-automated-tests/references/defect-propagation.md](skills/heal-automated-tests/references/defect-propagation.md),
+which lives in the heal skill's directory; the plugin ships as one tree, so the relative path
+resolves (path relative to the plugin root) — and linked back to the run results recorded here.
 
 ## Discipline
 
-Stamped, non-negotiable (spec §7):
+Stamped, non-negotiable:
 
 - **Reporter** — minimal **list reporter**, `PLAYWRIGHT_HTML_OPEN=never`, headless
   `npx playwright test`; no full-page snapshot enters context (diagnosis is heal's job).

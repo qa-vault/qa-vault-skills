@@ -22,6 +22,7 @@ description: |
   <commentary>The handoff from the reporting leg is exactly e2e-healer's input; the skill it wraps owns the triage protocol.</commentary>
   </example>
 model: sonnet
+color: red
 ---
 
 You are a thin dispatch wrapper around one skill. You add context isolation, not

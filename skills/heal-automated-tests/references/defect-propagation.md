@@ -1,13 +1,22 @@
 # Defect propagation — filing a confirmed product bug
 
 The shared rule for **every place the harness confirms a product bug** —
-`heal-automated-tests` triage today, `run-automated-tests` recording today, and any future skill
-that reaches the same verdict. It is a standalone reference so those skills point to one copy at
-`skills/heal-automated-tests/references/defect-propagation.md`.
+`heal-automated-tests` triage today, and any future skill that reaches the same verdict. It is a
+standalone reference so those skills point to one copy at
+`skills/heal-automated-tests/references/defect-propagation.md`. `run-automated-tests` uses this
+rule only to **link** an already-confirmed defect to a recorded run/result — the confirming triage
+itself is `heal-automated-tests`' job.
 
 A confirmed product bug lands in **QA Vault first, then the project's own tracker**,
 cross-referenced both ways. The agent **confirms the defect content with the user once** — and
 **never files silently into external systems.**
+
+## 0. Search before filing
+
+Before creating anything, **search for an existing report of this symptom** — `list_defects` in QA
+Vault, and the project's tracker when it's reachable. If a match already exists, **link and update
+it** — add the backlink via `update_defect` plus a tracker comment — instead of filing a
+duplicate. Only proceed to step 1 when no matching defect is found.
 
 ## 1. QA Vault first
 

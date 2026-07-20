@@ -20,6 +20,10 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
 
 ## The process
 
+**Batch loop.** Steps 2–6.3 run **per case** — each case's write-back (automation fields + APP-MAP
+append, step 7) lands as soon as it goes green after 6.3. Step 6.4 (full affected suite) runs **once
+per batch** after all specs are authored, as the final gate; step 7's report closes the whole batch.
+
 ### 1. Scope the batch
 
 Three input shapes: **explicit case IDs**, **a suite** (resolve it to its cases), or
@@ -29,8 +33,9 @@ For the open-ended form, query **`automation: to_be_automated` first** — that 
 backlog. But a case sitting at `not_automated` may just mean nobody set the flag, so **also sweep
 `not_automated`** and propose the automatable ones as a **second, clearly separated group**:
 *"candidates you haven't marked — confirm before I include them."* Nothing from this group enters
-the batch without **explicit confirmation**; on approval, its status update lands as part of the
-approved batch. Nothing is auto-included.
+the batch without **explicit confirmation**, granted **per case** — the engineer may approve some
+candidates and decline others; each approved case's status update lands as part of the approved
+batch. Nothing is auto-included.
 
 ### 2. Prepare
 
@@ -45,8 +50,9 @@ approved batch. Nothing is auto-included.
 Per case, before touching the browser:
 
 - **No email round-trips**; no third-party UIs the project can't control.
-- **≤ ~15 steps.** A longer case → propose **splitting it**, or **API-seeded preconditions** per
-  AUTOMATION.md's seeding strategy, so the spec starts closer to the behavior under test.
+- **≤ ~15 steps.** A longer case → **API-seeded preconditions** per AUTOMATION.md's seeding
+  strategy when the excess steps are setup (seed the state so the spec starts closer to the
+  behavior under test), or **propose splitting** when the case genuinely holds two scenarios.
 
 **Non-automatable cases are reported back with the reason — never silently skipped.**
 
@@ -101,7 +107,7 @@ Transcribe the case's steps into a spec. Rules:
 
 ## Discipline
 
-Stamped, non-negotiable (spec §7):
+Stamped, non-negotiable:
 
 - **Context** — snapshots to files only, never a full-page snapshot into context; query them with
   `find`/scoped reads.
