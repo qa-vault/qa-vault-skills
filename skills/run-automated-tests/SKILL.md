@@ -22,6 +22,9 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
 
 ### 1. Scope
 
+- **`get_project_rules` first** — per QA Vault MCP guidance, before any substantive work in the
+  project.
+
 Three input shapes: **all automated cases** (cases at `automation: automated`), **a suite**
 (resolve it to its cases), or **the specs matching a QA Vault run template**.
 
@@ -52,9 +55,12 @@ from the results.
 - **`create_test_run`** with **`origin: "automated"`**, the `project` code, the in-scope
   `case_ids` (or `template_id`), and title following the convention **`Automated <scope> <date>`**
   (e.g. `Automated smoke-suite 2026-07-20`).
-- **`bulk_record_results`** with one entry per executed case — `case_id`, `status` (**`passed`** /
-  **`failed`**), and for every failure a **`comment` = one-line error summary + trace pointer**
-  (`<file>:<line> — <assertion/error>; trace: <report or trace path>`).
+- **`bulk_record_results`** with one entry per executed case — `case_id`, `status`, `comment`:
+  - **`passed`** / **`failed`** per the outcome; every failure's **`comment` = one-line error
+    summary + trace pointer** (`<file>:<line> — <assertion/error>; trace: <report or trace path>`).
+  - A spec marked **`test.fixme()` over an open defect** → **`blocked`**, comment = the defect
+    reference. A **Playwright-skipped** spec → **`skipped`**, comment = the skip reason.
+  - **Flake gets NO recorded result** — it appears in the report as flake only.
 - **`complete_test_run`** once the scope fully executed — leave the run active if execution was
   partial.
 - **Confirmed product bugs propagate per
