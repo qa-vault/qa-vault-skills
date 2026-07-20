@@ -91,8 +91,9 @@ Transcribe the case's steps into a spec. Rules:
 ### 7. Write back
 
 - **Set both fields explicitly** in one `update_test_case`: `automation: "automated"` +
-  `automation_ref: "<repo-relative spec path>"`. They are **independent fields** — a ref-only
-  update wouldn't bump the case version, so always pass both together.
+  `automation_ref: "<repo-relative spec path>"`. They are **independent fields** — setting the
+  ref never flips the status and clearing the status never clears the ref, so always set both
+  explicitly.
 - **Append** every session discovery to APP-MAP.
 - **Report the changeset:** specs created, cases updated, cases declined + why.
 

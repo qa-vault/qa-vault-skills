@@ -36,12 +36,12 @@ playwright-cli snapshot --depth=N   # cap the tree depth instead of dumping the 
 ## 3. Harvest locators
 
 ```bash
-playwright-cli generate-locator <ref> --raw        # best-practice Playwright locator code
-playwright-cli generate-locator <ref> --raw eval   # exact rendered text / value to assert
+playwright-cli generate-locator <ref> --raw              # best-practice Playwright locator code
+playwright-cli --raw eval "el => el.textContent" <ref>   # exact rendered text/value to assert
 ```
 
-`--raw` output is ready to paste straight into APP-MAP and specs; `--raw eval` gives the exact
-string or value to put in an assertion.
+`generate-locator` output is ready to paste straight into APP-MAP and specs; `--raw eval`
+extracts the exact string or value to put in an assertion.
 
 ## 4. Generated code is the raw material
 
