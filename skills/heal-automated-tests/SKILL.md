@@ -23,8 +23,15 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
 
 ### 1. Reproduce cheaply
 
-Run **only the failing specs**, list reporter, `PLAYWRIGHT_HTML_OPEN=never` — never the whole
-suite. Before any diagnosis, **rerun each failure once in isolation.** A pass on the isolated
+**Start from the real artifacts.** A heal handoff must carry the **verbatim Playwright error +
+call-log** from the actual failing run and the paths to its `test-results/*/error-context.md`
+files. A paraphrased symptom is not a sufficient handoff — when those artifacts are missing,
+**request or regenerate them before investing in reproduction.**
+
+Run **only the failing specs**, list reporter, **`--trace on`**, `PLAYWRIGHT_HTML_OPEN=never` —
+never the whole suite. (`--trace on` is deliberate: local Playwright configs typically record no
+trace for a **first-attempt** failure — exactly the failures heal diagnoses — so force it on for
+the repro run.) Before any diagnosis, **rerun each failure once in isolation.** A pass on the isolated
 rerun is **not automatically flake**: first check the original failure's signature for data/state
 collision — unique-name violations, entities from another spec, leftover records — and that
 signature means an **isolation defect**, not flake. Only a **signature-less, non-recurring**
@@ -32,7 +39,10 @@ isolated-pass is flake — reported as flake and never "healed."
 
 ### 2. Inspect
 
-Attach **at the failure**: `--debug=cli` on the failing `<file>:<line>`, then drive the
+**Consult the repro run's trace first** — the `--trace on` run from step 1 already records the DOM,
+network, and console at the moment of failure, so read it before hand-building an instrumented
+diagnostic spec or attaching a live session. Attach **at the failure**: `--debug=cli` on the
+failing `<file>:<line>`, then drive the
 attach-and-observe loop in
 [skills/automate-test-cases/references/cli-mechanics.md](skills/automate-test-cases/references/cli-mechanics.md)
 — it lives in the automate skill's directory; the plugin ships as one tree, so the relative path
@@ -73,7 +83,11 @@ force green.**
 
 ### 4. Close
 
-- **Rerun each fixed spec to green**, then the **affected suite once** at the very end.
+- **Minimum evidence for a "healed" verdict:** **2 isolated runs** of the fixed spec green, **1
+  affected-suite run** read via **`--reporter=json`** (`stats.unexpected` = 0), and **1 final
+  post-cleanup confirmation** — the affected suite once, at the very end. Add runs beyond this set
+  only when each proves a **distinct named fact** (e.g. a deliberate budget-proof run for a timeout
+  fix); green reruns that prove nothing new are wasted turns.
 - **Append every new page fact** discovered while inspecting to APP-MAP; a fact that contradicts an
   existing entry replaces it.
 - **Report verdict-by-verdict:** each failure, its verdict, and its exit (spec fixed / case + spec

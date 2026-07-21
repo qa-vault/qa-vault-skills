@@ -198,6 +198,17 @@ interview; edited rarely. Every automation skill reads this before touching the 
      derived code differs per run.
      e.g. Every entity name is prefixed `e2e-` plus a random per-run suffix; each test deletes what it created. -->
 
+## Concurrency
+<!-- The stack's practical parallel-worker ceiling: how many workers the app and its database
+     sustain before Playwright's default 30s test timeout starts tripping. Established during setup
+     by stepping the worker count up until timeouts appear; record the safe ceiling here so runs
+     stay under it.
+     A spec whose cleanup leans on a helper's internal RETRY budget must raise its own
+     `test.setTimeout(<ms>)` to cover that budget — the default 30s can expire mid-retry and abort
+     cleanup, leaking data into parallel workers.
+     e.g. Up to <N> parallel workers sustained; specs relying on <helper>'s retry budget set
+     test.setTimeout(<ms>). -->
+
 ## Auth
 <!-- The auth model: test account + reusable storage state, or unauthenticated.
      e.g. Signed in via e2e/tests/auth.setup.ts -> e2e/.auth/user.json; credentials from

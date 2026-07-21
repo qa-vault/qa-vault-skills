@@ -5,7 +5,7 @@ the shared reference: `automate-test-cases` recon and `heal-automated-tests` ins
 attach through this loop. The rule behind every command below — **keep every observation on disk
 and out of the conversation.**
 
-Commands assume `@playwright/cli` ≥ 0.1.16 (see §7 for the fallback).
+Commands assume `@playwright/cli` ≥ 0.1.16 (see §9 for the fallback).
 
 ## 1. Attach to the seeded app
 
@@ -99,7 +99,36 @@ memory. This is why recon walks the flow once: the walk itself emits the spec's 
 - **Identity swaps:** `playwright-cli state-save <file>` / `playwright-cli state-load <file>` when
   a scenario needs to switch between saved storage states.
 
-## 7. Version floor + fallback
+## 7. Chain deterministic steps to cut turns
+
+When the next 1–2 CLI steps do **not** depend on the previous command's output — deterministic
+navigation, refs already known from the current snapshot — **chain them in one shell invocation
+with `&&`** rather than spending a turn per command, and take a **fresh snapshot only at decision
+points** (where the next action depends on what just appeared):
+
+```bash
+playwright-cli -s=tw-XXXX click <ref-a> && playwright-cli -s=tw-XXXX fill <ref-b> "text"
+```
+
+**Caveat — refs regenerate per snapshot.** An element ref is valid only for the snapshot that
+produced it, so **chain actions only against refs from the current snapshot**; when a step may
+change what the next ref points at, break the chain and re-snapshot. **Single-step when unsure.**
+
+## 8. Machine-readable run verdicts
+
+When a run's pass/fail feeds the **agent's own decision** rather than a human-facing log, run with
+**`--reporter=json`** and read **`stats.unexpected`** (`0` = everything passed) instead of parsing
+list-reporter prose:
+
+```bash
+npx playwright test <paths…> --reporter=json > .playwright-cli/run.json
+# read stats.unexpected from the JSON — non-zero is the count of real failures to act on
+```
+
+The redirect keeps the JSON on disk and out of context (§2's rule). A human-facing summary still
+uses the list reporter; the JSON verdict is only for programmatic branching.
+
+## 9. Version floor + fallback
 
 - Commands assume **`@playwright/cli` ≥ 0.1.16**.
 - When the global `playwright-cli` command is missing, use **`npx playwright cli <cmd>`** — the

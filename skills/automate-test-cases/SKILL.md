@@ -87,13 +87,29 @@ Transcribe the case's steps into a spec. Rules:
   prefix; the spec **provisions its own data and cleans up after itself**.
 - **Banned waits:** `waitForTimeout`, `networkidle`, `waitForLoadState`.
 
+**Concurrency-first — applied to every spec's first draft, before its first run.** Prevent
+parallel-worker collisions at write time rather than discovering them through failed batch runs:
+
+- **Scope every read and assertion to the entity the spec created** — its row, its dialog — never
+  a bare page-wide role/text query; assume other workers are mutating the same lists and pages
+  concurrently.
+- **`exact: true` whenever an accessible name could substring-collide** with test-data words or a
+  neighboring control's label. `exact: true` matching is **case-sensitive** — match the DOM's
+  actual text, not its CSS-transformed rendering.
+- **Prefer settled-state assertions** (e.g. count-based) over transient negative checks when
+  asserting removal from an animated list.
+
 ### 6. Verify
 
 1. **Iterate the single spec** to green: `npx playwright test <file>`. Only this spec — not the
    suite.
 2. **Flake check at BATCH level.** After each batch spec is green **individually**, run the new
    specs **together twice** (parallel workers exercise data collisions); any failure gets **one
-   isolated rerun** before classification.
+   isolated rerun** before classification. **A repeating signature is not flake:** when the **same
+   failure signature** recurs — 2–3 times across reruns or across specs, especially a **timeout
+   inside a shared helper** — stop rerunning and treat it as a **test-infrastructure defect**. Fix
+   the shared budget or helper **in-session** before continuing; rerunning-until-green on a
+   repeating signature only defers the cost to a future session at interest.
 3. **Falsifiability — TARGETED, not universal.** Break-and-restore only the **first spec in a
    previously-uncovered APP-MAP area** plus **any known-trap assertion** (CSS-transformed text,
    animated list removals, glyph-sibling chips) — force **red**, restore, confirm **green**; others

@@ -33,6 +33,7 @@ For **every** question: first inspect the repo and the running app, then **recom
 - **Base URL + run command** — the URL the app serves on and the command that starts it.
 - **Auth model** — a dedicated test account with reusable storage state (the recommended default), programmatic vs UI login, or unauthenticated when the app has no login.
 - **Test-data strategy** — can tests hit a seeding API or script, or is it UI-only? **Unique-prefix naming** for everything a test creates (default prefix `e2e-` plus a per-run suffix). Cleanup policy — each test removes what it created.
+- **Concurrency ceiling** — how many parallel workers the app and its database sustain before Playwright's default 30s test timeout starts tripping. Establish it empirically against the running app (step the worker count up until timeouts appear) and record the safe ceiling; flag any shared helper whose internal retry budget a spec's cleanup depends on, so those specs can size `test.setTimeout` to cover that budget.
 - **Off-limits areas** — what agents must never drive: payments, emails to real users, third-party surfaces.
 
 The answers become `e2e/AUTOMATION.md`.
@@ -65,7 +66,7 @@ Created here, maintained by every later session:
 | File | Purpose |
 |---|---|
 | `playwright.config.ts` | baseURL, auth setup project + `storageState`, `webServer`, agent-run reporter/retry defaults |
-| `e2e/AUTOMATION.md` | project policy: QA Vault project, test-data prefix + cleanup, seeding strategy, auth model, run commands, off-limits areas |
+| `e2e/AUTOMATION.md` | project policy: QA Vault project, test-data prefix + cleanup, seeding strategy, auth model, run commands, off-limits areas, concurrency ceiling |
 | `e2e/APP-MAP.md` | append-forever knowledge base: per-area known-good locators, empirical quirks, navigation facts |
 | `e2e/tests/auth.setup.ts` | signs in once, writes the storage state the main project reuses |
 | `e2e/tests/fixtures.ts` | auth/navigation fixtures specs import instead of raw `@playwright/test` |

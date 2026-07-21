@@ -88,7 +88,10 @@ around it.
 whose header version lags its case's current version, surfaced for the engineer to decide on.
 
 Real failures needing repair are queued as **explicit input for `heal-automated-tests`** — a list,
-**one line each: `<file>:<line>` + one-line error summary.** This skill records; it does not fix.
+**one line each: `<file>:<line>` + one-line error summary.** Capture into that handoff, at run
+time, the **verbatim Playwright error + call-log** and the **`test-results/*/error-context.md`**
+path(s) for each failure — the artifacts are already on disk, so attaching them is free, while a
+paraphrase forces the healer to re-derive the failure. This skill records; it does not fix.
 **The engineer decides whether healing runs now** or later — never auto-invoke it. **Defects for
 those queued failures are filed by `heal-automated-tests`' triage** — per
 [skills/heal-automated-tests/references/defect-propagation.md](skills/heal-automated-tests/references/defect-propagation.md),
