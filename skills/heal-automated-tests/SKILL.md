@@ -62,10 +62,14 @@ force green.**
   re-derive the spec from the updated case.** The provenance header keeps case↔spec identity
   stable across the rewrite. Never edit the spec to match new behavior without updating its source
   case.
-- **Product bug** (spec right, app wrong) → **propagate per
-  [references/defect-propagation.md](references/defect-propagation.md)**, then mark the spec
+- **Product bug** (spec right, app wrong) → **reproduce minimally — just enough to rule out a test
+  defect — then propagate per
+  [references/defect-propagation.md](references/defect-propagation.md)** and mark the spec
   **`test.fixme()` with the defect reference** so the suite stays green while the bug is open, and
-  **report it to the engineer.** Never delete or weaken the spec to hide the failure.
+  **report it to the engineer.** This harness is traditional QA: it **finds and files**. **Do NOT
+  root-cause into app source, database, or network internals beyond confirming the symptom** —
+  code-level diagnosis belongs to whoever picks up the ticket, a later SDLC stage. Never delete or
+  weaken the spec to hide the failure.
 
 ### 4. Close
 

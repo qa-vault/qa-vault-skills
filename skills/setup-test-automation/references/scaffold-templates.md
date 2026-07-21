@@ -188,8 +188,15 @@ interview; edited rarely. Every automation skill reads this before touching the 
      e.g. Cases live in project `<CODE>`; when several projects map to this repo, list each with its area. -->
 
 ## Test data
-<!-- Unique-prefix naming for everything a test creates + cleanup policy.
-     e.g. Every entity name is prefixed `e2e-` plus a per-run suffix; each test deletes what it created. -->
+<!-- Unique-prefix naming for everything a test creates + cleanup policy. A timestamp ALONE is not
+     unique — parallel workers can create two entities within the same millisecond and collide —
+     so the per-run suffix needs random entropy, not just the clock:
+     `${prefix}${Date.now()}-${Math.random().toString(36).slice(2, 8)}`.
+     When the app derives a short code/slug from an entity's TITLE, hyphen-joined single-token
+     names can all collapse to the same derived code and exhaust its collision retries — for those
+     entities use SPACE-separated multi-word titles with the distinguishing word early, so the
+     derived code differs per run.
+     e.g. Every entity name is prefixed `e2e-` plus a random per-run suffix; each test deletes what it created. -->
 
 ## Auth
 <!-- The auth model: test account + reusable storage state, or unauthenticated.
