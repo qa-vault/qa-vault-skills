@@ -83,7 +83,7 @@ Transcribe the case's steps into a spec. Rules:
 - **Locators:** role-first, **APP-MAP-first then browser** (`getByRole` → `getByLabel` →
   `getByText` → `getByTestId` escape hatch).
 - **Assertions:** web-first, auto-retrying only (`toBeVisible`, `toHaveText`, …).
-- **Data:** per-run unique, `` `${prefix}${Date.now()}` `` with the AUTOMATION.md Test-data
+- **Data:** per-run unique, `` `${prefix}${Date.now()}-${Math.random().toString(36).slice(2, 8)}` `` with the AUTOMATION.md Test-data
   prefix; the spec **provisions its own data and cleans up after itself**.
 - **Banned waits:** `waitForTimeout`, `networkidle`, `waitForLoadState`.
 
