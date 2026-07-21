@@ -14,10 +14,12 @@ e2e/
   AUTOMATION.md          # project policy (interview answers)
   APP-MAP.md             # append-forever locator knowledge base
   .auth/user.json        # signed-in storage state (gitignored)
+  recon/                 # probe aria-snapshot outputs (gitignored)
   tests/
     auth.setup.ts        # signs in once, writes .auth/user.json
     fixtures.ts          # test/expect specs import instead of @playwright/test
     seed.spec.ts         # environment bootstrap; sessions attach here
+    probe.spec.ts        # one-shot structure read (invoked via PROBE_URL)
     **/*.spec.ts         # generated specs land here later
 .playwright-cli/         # ephemeral playwright-cli working files (gitignored)
 ```
@@ -95,7 +97,7 @@ export default defineConfig({
 Signs in **once** and saves the session so every later test starts authenticated. Prefer the
 programmatic path (Option B) when the app exposes an auth API — it is faster and less flaky;
 otherwise drive the real login UI (Option A). Either way, `.auth/user.json` holds a live
-session and **must be gitignored** (see template 7). **Credentials never land in committed code** —
+session and **must be gitignored** (see template 8). **Credentials never land in committed code** —
 they live in the shell/CI env (a gitignored `.env.e2e` loaded by the engineer's shell, or CI
 secrets), read here as `E2E_EMAIL` / `E2E_PASSWORD`.
 
@@ -171,7 +173,59 @@ test("seed", async ({ page }) => {});
 
 ---
 
-## 5. `e2e/AUTOMATION.md`
+## 5. `e2e/tests/probe.spec.ts`
+
+A one-shot **structure probe** — deliberately **not** part of a normal suite run. It reuses the
+config's authenticated `storageState` and `baseURL` (it runs under the `chromium` project, so the
+`setup` dependency signs it in), navigates to a URL passed via `PROBE_URL`, writes the page's
+`ariaSnapshot()` to a file under `e2e/recon/`, and exits. **Read-only by construction**; freshness
+comes from re-running it, not from staleness bookkeeping. It imports `test`/`expect` directly (not
+from `fixtures`) because it navigates to `PROBE_URL` itself rather than the fixtures' `/` root.
+
+Invoked explicitly — the full invocation contract lives in the shared **Probe — one-shot structure
+read** section of `automate-test-cases`' `references/cli-mechanics.md`:
+
+```bash
+PROBE_URL=/projects npx playwright test e2e/tests/probe.spec.ts --reporter=json
+# → e2e/recon/projects.aria.md
+```
+
+```ts
+import { test, expect } from "@playwright/test";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+
+// One-shot page-structure probe. Reuses the config's authenticated storageState + baseURL;
+// goes to PROBE_URL, writes the page's aria snapshot to e2e/recon/<slug>.aria.md, exits.
+test("probe", async ({ page }) => {
+  // Self-gating: a normal suite run sets no PROBE_URL, so the probe skips (1 skipped — cosmetic).
+  test.skip(!process.env.PROBE_URL, "probe is invoked explicitly with PROBE_URL");
+
+  const url = process.env.PROBE_URL!; // required — path relative to baseURL, e.g. /projects
+  const slug =
+    url.split(/[?#]/)[0].replace(/^\/+|\/+$/g, "").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase() ||
+    "root";
+  const out = process.env.PROBE_OUT ?? `e2e/recon/${slug}.aria.md`; // optional override
+
+  await page.goto(url);
+  // Web-first visibility wait before snapshotting — no banned fixed waits.
+  await expect(page.locator("body")).toBeVisible();
+  const snapshot = await page.locator("body").ariaSnapshot();
+
+  // Two-line header (final URL after redirects, capture timestamp) then the snapshot, fenced.
+  const doc =
+    `final URL: ${page.url()}\n` +
+    `captured at: ${new Date().toISOString()}\n\n` +
+    `\`\`\`yaml\n${snapshot}\n\`\`\`\n`;
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, doc);
+  console.log(`probe → ${out}`);
+});
+```
+
+---
+
+## 6. `e2e/AUTOMATION.md`
 
 Project policy, one line per section, written from the interview answers. Section headings are
 the contract — the other skills read them by name. Replace each `<!-- … -->` placeholder with
@@ -229,7 +283,7 @@ interview; edited rarely. Every automation skill reads this before touching the 
 
 ---
 
-## 6. `e2e/APP-MAP.md`
+## 7. `e2e/APP-MAP.md`
 
 The append-forever locator knowledge base. Generated as a skeleton: the format-contract header
 comment plus one empty example area. Sessions append real areas as they discover them.
@@ -272,11 +326,11 @@ Navigation:
 
 ---
 
-## 7. `.gitignore` additions
+## 8. `.gitignore` additions
 
-Append these two lines (create `.gitignore` if absent). They keep the live session state and
-the ephemeral CLI artifacts out of version control — both must match the generated directories
-above exactly.
+Append these lines (create `.gitignore` if absent). They keep the live session state and the
+ephemeral, regenerable observations out of version control — all must match the generated
+directories above exactly.
 
 ```gitignore
 # Playwright signed-in storage state (a live session — never commit)
@@ -284,4 +338,7 @@ e2e/.auth/
 
 # playwright-cli working artifacts (snapshots, screenshots, logs) — ephemeral
 .playwright-cli/
+
+# probe aria-snapshot outputs — regenerable observations, never committed
+e2e/recon/
 ```

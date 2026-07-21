@@ -56,16 +56,30 @@ Per case, before touching the browser:
   strategy when the excess steps are setup (seed the state so the spec starts closer to the
   behavior under test), or **propose splitting** when the case genuinely holds two scenarios.
 
+When a case's entry state is **URL-addressable**, a one-shot **probe** (cheap, read-only, no attach
+tax — see [references/cli-mechanics.md](references/cli-mechanics.md) → *Probe*) confirms the surface
+the case describes actually exists as described before you commit to automating it; a case pointing
+at a screen that has moved or vanished is an intent-change candidate for `maintain-test-cases`, not
+an automation target.
+
 **Non-automatable cases are reported back with the reason — never silently skipped.**
 
 ### 4. Recon only the unknown
 
-If APP-MAP already covers the case's UI area, **skip straight to authoring**. Otherwise walk the
-case's flow **exactly once** via the attach loop in
-[references/cli-mechanics.md](references/cli-mechanics.md), harvesting locators and exact
-text/values as you go, and **append every fact learned to APP-MAP; a fact that contradicts an
-existing entry replaces it.** The cost is paid **once per UI area, not once per case** — the next
-case in the same area reads the map instead of the browser.
+If APP-MAP already covers the case's UI area, **skip straight to authoring**. Otherwise recon the
+case's flow **exactly once**, cheapest instrument first — both live in
+[references/cli-mechanics.md](references/cli-mechanics.md):
+
+- **Probe every URL-addressable state first.** For each state the case reaches by URL, run the
+  one-shot **probe** — it writes the page's aria structure to a file with no attach-session tax.
+  Read the snapshot and harvest the stable roles and exact text/values from it.
+- **Attach only for the interactive layers** the probe cannot reach by URL — dialogs, menus,
+  client-side toggles, multi-step flows — via the attach loop. Probe reduces attach sessions to
+  roughly one per fresh area; it does not eliminate them, so attach still earns its cost here.
+
+Harvesting as you go, **append every fact learned to APP-MAP; a fact that contradicts an existing
+entry replaces it.** The cost is paid **once per UI area, not once per case** — the next case in the
+same area reads the map instead of the browser.
 
 ### 5. Author the spec
 
@@ -131,6 +145,42 @@ parallel-worker collisions at write time rather than discovering them through fa
 
 **Specs land uncommitted for engineer review — this skill never commits.**
 
+## Product defects — encode with `test.fail()`, not `fixme`
+
+When verification trips over a **confirmed product bug** (the app misbehaves and the case is right),
+the spec is neither declined nor deleted — it is kept as an **inverted expectation**, so the day the
+product is fixed the suite tells you. Reproduce minimally — just enough to rule out a test defect —
+then **file the defect per `skills/heal-automated-tests/references/defect-propagation.md`**
+(plugin-root relative) and encode it in the spec.
+
+`test.fixme()` is **not** used for a product defect: its documented meaning — "the test itself is
+slow or crashes" — describes a broken *test*, not a broken *product*. Use `test.fail()`; the spec
+body asserts the **correct** expected behavior per the case.
+
+**The encoding is a pair, written together, always:**
+
+```ts
+test("<case title>", async ({ page }) => {
+  test.fail();
+  test.info().annotations.push({
+    type: "issue",
+    description: "<tracker URL of the filed defect>",
+  });
+  // ...steps asserting the correct behavior...
+});
+```
+
+`test.fail()` carries the behavior — because the expectation is inverted, an unexpected **pass** is a
+built-in product-fix detector. The `issue` annotation carries machine-readable traceability: it
+travels into the HTML and JSON reports, which is what `run-automated-tests` reads to record the case
+as **blocked** against its defect.
+
+- A `fail()` spec that **provisions real data** does its cleanup in **`try/finally`** — the bug
+  throws before the happy path's teardown would run — and sizes **`test.setTimeout`** to cover the
+  cleanup's retry budget (per AUTOMATION.md's concurrency note).
+- The case **stays un-flipped** — `automation` unchanged, **no `automation_ref`** — until the
+  product is fixed; the fix is detected and the loop closed by `heal-automated-tests`.
+
 ## Discipline
 
 Stamped, non-negotiable:
@@ -149,6 +199,7 @@ Stamped, non-negotiable:
   intent.
 - **Product bugs** — verification tripping over suspected **product** misbehavior: reproduce
   minimally, **file per `skills/heal-automated-tests/references/defect-propagation.md`** (plugin-root
-  relative), **decline or `fixme`** the case, continue. Never turn authoring into a debugging session.
+  relative), **encode with the `test.fail()` + `issue`-annotation pair** (see *Product defects*
+  above; the case stays un-flipped), continue. Never turn authoring into a debugging session.
 - **Screenshots** — only when a human will look at them.
 - **Models** — Sonnet-class models are sufficient and preferred for authoring/healing loops.

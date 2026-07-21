@@ -41,9 +41,12 @@ isolated-pass is flake — reported as flake and never "healed."
 
 **Consult the repro run's trace first** — the `--trace on` run from step 1 already records the DOM,
 network, and console at the moment of failure, so read it before hand-building an instrumented
-diagnostic spec or attaching a live session. Attach **at the failure**: `--debug=cli` on the
-failing `<file>:<line>`, then drive the
-attach-and-observe loop in
+diagnostic spec or attaching a live session. **Then probe the failing spec's route** — one-shot,
+read-only (the *Probe* section of the CLI-mechanics reference linked below) — and **compare the live
+structure against what the spec expects**; that comparison alone often settles **drift vs product
+change** with no attach at all. **Attach only when the failure lives behind an interaction** the
+probe cannot reach by URL — dialog, menu, toggle, multi-step flow: `--debug=cli` on the failing
+`<file>:<line>`, then drive the attach-and-observe loop in
 [skills/automate-test-cases/references/cli-mechanics.md](skills/automate-test-cases/references/cli-mechanics.md)
 — it lives in the automate skill's directory; the plugin ships as one tree, so the relative path
 resolves (path relative to the plugin root). Pull **scoped** snapshots to files, plus console and
@@ -51,7 +54,7 @@ network **only as the failure
 demands** — read only the failing spec's error context, never a full-page dump into the
 conversation.
 
-### 3. Triage — four verdicts, four exits
+### 3. Triage — five verdicts, five exits
 
 Every failure gets exactly one verdict; each verdict has one exit. Judge against the case — **never
 force green.**
@@ -74,12 +77,22 @@ force green.**
   case.
 - **Product bug** (spec right, app wrong) → **reproduce minimally — just enough to rule out a test
   defect — then propagate per
-  [references/defect-propagation.md](references/defect-propagation.md)** and mark the spec
-  **`test.fixme()` with the defect reference** so the suite stays green while the bug is open, and
-  **report it to the engineer.** This harness is traditional QA: it **finds and files**. **Do NOT
-  root-cause into app source, database, or network internals beyond confirming the symptom** —
-  code-level diagnosis belongs to whoever picks up the ticket, a later SDLC stage. Never delete or
-  weaken the spec to hide the failure.
+  [references/defect-propagation.md](references/defect-propagation.md)** and encode it in the spec
+  with the **`test.fail()` + `issue`-annotation pair** carrying the defect reference (the single
+  product-defect encoding — written together, always; see `automate-test-cases` → *Product defects*;
+  **not `test.fixme()`**). The inverted expectation keeps the suite green while the bug is open and
+  trips an unexpected pass the day it is fixed; the case **stays un-flipped** until then. **Report it
+  to the engineer.** This harness is traditional QA: it **finds and files**. **Do NOT root-cause into
+  app source, database, or network internals beyond confirming the symptom** — code-level diagnosis
+  belongs to whoever picks up the ticket, a later SDLC stage. Never delete or weaken the spec to hide
+  the failure.
+- **Product fixed** (a `test.fail()` bug spec **unexpectedly passes** — Playwright flags it as an
+  unexpected pass, the built-in fix detector; a deterministic signature, not flake) → the product now
+  does what the case says. **Remove the `test.fail()` + `issue`-annotation pair**, run the now-honest
+  spec green, **flip the case to `automated` with its `automation_ref` write-back**, and **close the
+  defect out** — QA Vault status + the tracker issue — per the **Closing the loop** section of
+  [references/defect-propagation.md](references/defect-propagation.md) (the reverse of filing: same
+  cross-link discipline, a single user confirmation for the outward closure).
 
 ### 4. Close
 
@@ -91,7 +104,7 @@ force green.**
 - **Append every new page fact** discovered while inspecting to APP-MAP; a fact that contradicts an
   existing entry replaces it.
 - **Report verdict-by-verdict:** each failure, its verdict, and its exit (spec fixed / case + spec
-  re-derived / defect filed + `fixme` / flake).
+  re-derived / defect filed + `fail()` / product fixed → case flipped + defect closed / flake).
 
 **Healed specs land uncommitted for engineer review — this skill never commits.**
 

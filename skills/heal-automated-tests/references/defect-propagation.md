@@ -5,7 +5,8 @@ The shared rule for **every place the harness confirms a product bug** —
 standalone reference so those skills point to one copy at
 `skills/heal-automated-tests/references/defect-propagation.md`. `run-automated-tests` uses this
 rule only to **link** an already-confirmed defect to a recorded run/result — the confirming triage
-itself is `heal-automated-tests`' job.
+itself is `heal-automated-tests`' job. The reverse flow — **closing** a defect the product has since
+fixed — mirrors this same discipline and lives in *Closing the loop* below.
 
 A confirmed product bug lands in **QA Vault first, then the project's own tracker**,
 cross-referenced both ways. The agent **confirms the defect content with the user once** — and
@@ -49,6 +50,26 @@ the issue with a single copy-paste.
 The defect content is **confirmed with the user once**, as part of the verdict/report flow, and
 then lands in **every** destination (QA Vault + tracker, or QA Vault + report fallback). The agent
 **never silently files** issues into external systems.
+
+## Closing the loop — resolving a fixed product defect
+
+Filing is not the end of a defect's life. When a later run proves the product is fixed — a
+`test.fail()` spec **unexpectedly passes**, the built-in fix detector — the same defect is resolved.
+**Closure is the exact reverse of filing, with the same discipline:**
+
+1. **QA Vault first.** `update_defect` on the defect the spec's `issue` annotation points to — set
+   its status to resolved/closed per the project's defect workflow, with a closing note naming the
+   run or spec that proved the fix and the case now flipped to `automated`.
+2. **Then the project's tracker.** Close the linked tracker issue through the **same channel that
+   filed it** (repo task-creation skill → task-management MCP → `gh` CLI, in that priority order),
+   referencing the QA Vault defect ID. Both records move together — neither is left open once the
+   other is closed.
+3. **Single confirmation, never silent.** The outward closure — the tracker issue — is **confirmed
+   with the user once**, as part of the verdict/report flow, exactly as filing is. Never silently
+   close an issue in an external system.
+
+If a fixed spec has **no matching open defect** to resolve, report that anomaly (the marker was
+removed without a defect record behind it) rather than closing nothing silently.
 
 ## Defect body template
 
