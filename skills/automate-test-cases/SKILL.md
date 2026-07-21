@@ -91,10 +91,14 @@ Transcribe the case's steps into a spec. Rules:
 
 1. **Iterate the single spec** to green: `npx playwright test <file>`. Only this spec — not the
    suite.
-2. **Flake check** — run it **3×**; a spec that isn't green all three times isn't done.
-3. **Falsifiability spot-check — one per NEW spec, on its primary assertion:** break the
-   precondition via data, confirm the spec goes **red**, restore, confirm **green** again. Proves
-   the assertion can actually fail.
+2. **Flake check at BATCH level.** After each batch spec is green **individually**, run the new
+   specs **together twice** (parallel workers exercise data collisions); any failure gets **one
+   isolated rerun** before classification.
+3. **Falsifiability — TARGETED, not universal.** Break-and-restore only the **first spec in a
+   previously-uncovered APP-MAP area** plus **any known-trap assertion** (CSS-transformed text,
+   animated list removals, glyph-sibling chips) — force **red**, restore, confirm **green**; others
+   rely on web-first assertions + the flake check. A broken run **aborts before its own cleanup**:
+   after restoring, delete what it left behind (the spec's cleanup path) — leftovers are parallel-suite mines.
 4. **Full affected suite once**, at the very end.
 
 ### 7. Write back
@@ -106,6 +110,8 @@ Transcribe the case's steps into a spec. Rules:
 - **Append** every session discovery to APP-MAP; a fact that contradicts an existing entry replaces
   it.
 - **Report the changeset:** specs created, cases updated, cases declined + why.
+- **Stale schema** — if the QA Vault MCP **rejects or silently drops a documented parameter**, its
+  cached tool schemas likely predate a server deploy; **reconnect the MCP server**, don't work around it.
 
 **Specs land uncommitted for engineer review — this skill never commits.**
 
@@ -125,5 +131,8 @@ Stamped, non-negotiable:
   allows.
 - **Honesty** — never weaken an assertion to pass, never edit product code, escalate on ambiguous
   intent.
+- **Product bugs** — verification tripping over suspected **product** misbehavior: reproduce
+  minimally, **file per `skills/heal-automated-tests/references/defect-propagation.md`** (plugin-root
+  relative), **decline or `fixme`** the case, continue. Never turn authoring into a debugging session.
 - **Screenshots** — only when a human will look at them.
 - **Models** — Sonnet-class models are sufficient and preferred for authoring/healing loops.

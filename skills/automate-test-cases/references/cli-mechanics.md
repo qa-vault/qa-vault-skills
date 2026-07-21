@@ -24,17 +24,18 @@ playwright-cli attach tw-XXXX
 
 The test is paused at its **start, on `about:blank`** — *before* the fixture's `goto`, so nothing
 is on screen yet; it is **not** already on the app root. The seed depends on the auth-setup
-project, so **that** test pauses first; `resume` it and the seed test then pauses at its own start
-and prints a fresh attach line — attach to that one. From the seed's pause, **`step-over` past the
-fixture navigation** lands the page on the authenticated app root, now live and drivable:
+project, so **that** test pauses first; **`-s=tw-XXXX resume`** it and the seed test then pauses at
+its own start and prints a fresh attach line — attach to that one. From the seed's pause,
+**`step-over` past the fixture navigation** lands the page on the authenticated app root, now live
+and drivable:
 
 ```bash
-playwright-cli step-over          # advance past the fixture's goto("/") → authenticated app root
-playwright-cli find "<text>"      # observe/drive the paused live page (§2)
+playwright-cli -s=tw-XXXX step-over    # advance past the fixture's goto("/") → authenticated app root
+playwright-cli -s=tw-XXXX find "<text>" # observe/drive the paused live page (§2)
 ```
 
-Drive the flow from this paused state (§2–§4). When the walk is done, **`resume` releases the
-session** — the test runs to completion, and when the run's last test finishes the process exits
+Drive the flow from this paused state (§2–§4). When the walk is done, **`-s=tw-XXXX resume` releases
+the session** — the test runs to completion, and when the run's last test finishes the process exits
 and the session ends on its own.
 
 `--debug=cli` on a specific `<file>:<line>` (as heal attaches at a failure, §2 of that skill) uses
@@ -88,9 +89,12 @@ memory. This is why recon walks the flow once: the walk itself emits the spec's 
 
 ## 6. Session hygiene
 
-- **One named session per task:** within a single attach flow the session is implicit;
-  `-s=<name>` (or exporting `PLAYWRIGHT_CLI_SESSION=<name>`) matters only when driving **multiple**
-  sessions at once.
+- **Every invocation targets `default` unless told otherwise:** each `playwright-cli` command is a
+  fresh process with no memory of the last one, so it targets the `default` session by default.
+  After `attach tw-X`, **EVERY** subsequent command must pass **`-s=tw-X`** (`step-over`, `find`,
+  `resume`, …) — or **export `PLAYWRIGHT_CLI_SESSION=tw-X` once** for the shell so every later
+  command inherits it. Skip the flag and the command silently drives the wrong (empty `default`)
+  session.
 - **Close when done:** `playwright-cli close`.
 - **Identity swaps:** `playwright-cli state-save <file>` / `playwright-cli state-load <file>` when
   a scenario needs to switch between saved storage states.

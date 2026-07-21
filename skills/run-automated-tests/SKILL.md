@@ -78,6 +78,10 @@ orphaned.** It does not run and no result is recorded for it.
   partial. **Missing-spec cases (Scope) sit outside the executable scope** — reported, but they do
   **not** block completion once everything runnable has executed.
 
+If the QA Vault MCP **rejects or silently drops a parameter documented here**, the session's cached
+tool schemas likely predate a server deploy — **reconnect the MCP server** rather than working
+around it.
+
 ### 4. Hand off
 
 **STALE specs (Scope) are listed as re-derivation candidates for `automate-test-cases`** — a spec

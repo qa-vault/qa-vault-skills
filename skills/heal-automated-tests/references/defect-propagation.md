@@ -52,6 +52,10 @@ then lands in **every** destination (QA Vault + tracker, or QA Vault + report fa
 
 ## Defect body template
 
+The body records **what QA observed** — symptom, minimal repro, expected vs actual, environment,
+references; a code-level diagnosis is **welcome when already known but never required**, and never
+worth extra investigation time.
+
 Ready to fill — the same body goes to QA Vault, the tracker, and the fallback report:
 
 ```
