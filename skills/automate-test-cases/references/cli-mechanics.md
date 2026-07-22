@@ -1,11 +1,44 @@
 # CLI mechanics — driving a live session with playwright-cli
 
-The token-discipline mechanics of driving a real browser session with `playwright-cli`. This is
-the shared reference: `automate-test-cases` recon and `heal-automated-tests` inspection both
-attach through this loop. The rule behind every command below — **keep every observation on disk
-and out of the conversation.**
+The token-discipline mechanics of observing and driving a real browser session. This is the shared
+reference: `automate-test-cases` recon and `heal-automated-tests` inspection both use it. The rule
+behind every command below — **keep every observation on disk and out of the conversation.**
+
+Two instruments live here. Reach for the **probe** first — a one-shot, read-only structure read of a
+URL-addressable page, with no live session and no attach tax. Fall to the **attach loop** (§1 onward)
+only for the interactive layers the probe cannot reach by URL: dialogs, menus, client-side toggles,
+multi-step flows.
 
 Commands assume `@playwright/cli` ≥ 0.1.16 (see §9 for the fallback).
+
+## Probe — one-shot structure read
+
+The **probe** is the scaffold's `e2e/tests/probe.spec.ts` (created by `setup-test-automation`). It
+reuses the contract's authenticated `storageState`, navigates to a URL you pass in, writes that
+page's `ariaSnapshot()` to a file, and exits — **read-only by construction.** It is **always live**:
+freshness comes from re-running it, not from staleness bookkeeping. Both authoring recon and heal
+triage reach for it before paying the attach tax.
+
+```bash
+PROBE_URL=/projects npx playwright test e2e/tests/probe.spec.ts --reporter=json
+# → e2e/recon/projects.aria.md   (canonical path — overwritten on every probe of the same path)
+```
+
+- **`PROBE_URL`** — required; a path relative to `baseURL` (e.g. `/projects`).
+- **`PROBE_OUT`** — optional override; defaults to `e2e/recon/<slug>.aria.md`, the slug derived from
+  the path. Canonical paths mean the latest snapshot of a state is always at a known location — there
+  is no separate artifact library to maintain.
+- **Output file** — a two-line header (the final URL after redirects, and the captured-at ISO
+  timestamp) followed by the aria snapshot in a fenced block. If auth has expired the snapshot
+  honestly shows the **login page** — the probe reports reality, never a cached lie.
+
+**Read it like any observation (the on-disk rule):** open `e2e/recon/<slug>.aria.md` and grep it for
+the fragment the current step needs — never paste the whole snapshot into the conversation.
+
+**Honest boundary:** the probe reaches only **URL-addressable** states. SPAs keep many states
+client-side (dialogs, menus, toggles, wizard steps), which is exactly what the attach loop below is
+for. The probe **reduces** attach sessions — roughly one per fresh area instead of several — it does
+not eliminate them.
 
 ## 1. Attach to the seeded app
 

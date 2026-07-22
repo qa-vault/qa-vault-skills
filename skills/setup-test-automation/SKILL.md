@@ -40,14 +40,18 @@ The answers become `e2e/AUTOMATION.md`.
 
 ### 3. Scaffold
 
-Generate the artifacts from [references/scaffold-templates.md](references/scaffold-templates.md), filled with the interview answers: **install and verify the toolchain** (`@playwright/test`, `@playwright/cli`, Chromium); write `playwright.config.ts` (auth setup project, `storageState`, `webServer`, agent-run reporter/retry defaults), `e2e/tests/auth.setup.ts`, `e2e/tests/fixtures.ts`, `e2e/tests/seed.spec.ts`, `e2e/AUTOMATION.md`, `e2e/APP-MAP.md` (skeleton with per-area headings), and the `.gitignore` additions.
+Generate the artifacts from [references/scaffold-templates.md](references/scaffold-templates.md), filled with the interview answers: **install and verify the toolchain** (`@playwright/test`, `@playwright/cli`, Chromium); write `playwright.config.ts` (auth setup project, `storageState`, `webServer`, agent-run reporter/retry defaults), `e2e/tests/auth.setup.ts`, `e2e/tests/fixtures.ts`, `e2e/tests/seed.spec.ts`, `e2e/tests/probe.spec.ts` (the one-shot structure probe), `e2e/AUTOMATION.md`, `e2e/APP-MAP.md` (skeleton with per-area headings), and the `.gitignore` additions.
 
 ### 4. Verify — prove the whole toolchain before any authoring
 
 1. Run the seed test headless to **green**: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts`.
 2. One `--debug=cli` attach round-trip so the agent path is proven end to end. Run it in the **background** — `--debug=cli` pauses the test and holds the process open, so a foreground shell blocks: `PLAYWRIGHT_HTML_OPEN=never npx playwright test e2e/tests/seed.spec.ts --debug=cli`. Wait for the *Debugging Instructions* + session name, `playwright-cli attach <session>`, then **prove the paused page is drivable**: the pause is at the test's start on `about:blank`, and the auth-setup dependency pauses first — `resume` to the seed test's own pause, `step-over` past the fixture navigation onto the authenticated app root, and one `find`/snapshot confirms it. Then `resume` releases the session — the seed test finishes and the session ends on its own.
+3. **One probe against the app root** proves the instrument end to end:
+   `PLAYWRIGHT_HTML_OPEN=never PROBE_URL=/ npx playwright test e2e/tests/probe.spec.ts`. Confirm
+   `e2e/recon/root.aria.md` appears and its snapshot shows the **authenticated** app root — not the
+   login page. A login snapshot means the storage state did not apply; fix auth before handing off.
 
-If either step is red, fix the scaffold before handing off — a broken bootstrap breaks every skill downstream.
+If any step is red, fix the scaffold before handing off — a broken bootstrap breaks every skill downstream.
 
 ### 5. Hand off
 
@@ -71,6 +75,7 @@ Created here, maintained by every later session:
 | `e2e/tests/auth.setup.ts` | signs in once, writes the storage state the main project reuses |
 | `e2e/tests/fixtures.ts` | auth/navigation fixtures specs import instead of raw `@playwright/test` |
 | `e2e/tests/seed.spec.ts` | the environment bootstrap every generation/heal session attaches to |
+| `e2e/tests/probe.spec.ts` | one-shot structure read — `goto` a `PROBE_URL`, write its aria snapshot to `e2e/recon/`; the recon/triage instrument skills reach for before attaching |
 
 **APP-MAP.md format — curated markdown, never CLI artifacts.** One `## <Feature area>` section per area; each holds known-good locators as Playwright code, one-line `⚠` quirk warnings, and navigation rules in prose. Raw `.playwright-cli/` outputs (snapshots, screenshots, logs) stay gitignored and **never** enter this file. Every session appends the page facts it learned.
 
