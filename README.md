@@ -11,7 +11,7 @@ The content skills (`create-test-cases`, `maintain-test-cases`) include a **vali
 - **`maintain-test-cases`** — keep the repository in sync after development changes: update stale cases, add new coverage, remove what's obsolete — in one reviewed changeset, flagging suspicious changed behavior (possible regressions) for the engineer to resolve.
 - **`organize-test-repository`** — restructure and clean up suites, tags, and case order; audit for sprawl and duplicates.
 
-**E2e automation harness:**
+**E2E automation harness:**
 
 - **`setup-test-automation`** — one-time per-repo bootstrap: scaffold Playwright + playwright-cli, the seed test and fixtures, and the per-project `AUTOMATION.md` / `APP-MAP.md` contract the other automation skills read. Runs first.
 - **`automate-test-cases`** — turn QA Vault manual cases into Playwright specs, verified against the live app with playwright-cli, linked both ways to their source cases, with automation status updated.
@@ -20,15 +20,19 @@ The content skills (`create-test-cases`, `maintain-test-cases`) include a **vali
 
 This plugin installs natively in both **Claude Code** and **Codex CLI**. In Claude Code the automation family also ships two companion subagents in `agents/` — `e2e-author` and `e2e-healer` — that run the browser-heavy author and heal loops in an isolated context; Codex has no subagent layer and runs the same skills inline.
 
+---
+
 <img src="https://img.shields.io/badge/Who_it%27s_for-8250df?style=for-the-badge" alt="Who it's for" />
 
-## Who it's for
+### Who it's for
 
 QA and QA-adjacent engineers who use an MCP-capable AI agent (Claude Code / Codex) with the QA Vault MCP server connected. The skills make the agent a force-multiplier — the engineer stays in control and reviews/approves everything before it lands in the vault.
 
+---
+
 <img src="https://img.shields.io/badge/Prerequisites-9a6700?style=for-the-badge" alt="Prerequisites" />
 
-## Prerequisites for the automation skills
+### Prerequisites for the automation skills
 
 The manual QA practice skills need only the **QA Vault MCP** connected. The e2e automation harness additionally requires:
 
@@ -43,13 +47,13 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
 
 <img src="https://img.shields.io/badge/Install-2ea043?style=for-the-badge" alt="Install" />
 
-## Install
+### Install
 
 `qa-vault-skills` is distributed through the `qa-vault` marketplace catalog. Installing it is **self-contained** — you do not need any other `qa-vault` plugin (such as `codelore`) installed first. Pick the section for your tool.
 
 <img src="https://img.shields.io/badge/Claude_Code-cc785c?style=for-the-badge" alt="Claude Code" />
 
-### Claude Code
+#### Claude Code
 
 1. **Add the marketplace** (one-time):
 
@@ -76,7 +80,7 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
 
 <img src="https://img.shields.io/badge/Codex_CLI-1f2328?style=for-the-badge" alt="Codex CLI" />
 
-### Codex CLI
+#### Codex CLI
 
 Codex has its own plugin marketplace system; the flow mirrors Claude Code's and is fully independent of any other plugin.
 
@@ -106,7 +110,7 @@ Codex has its own plugin marketplace system; the flow mirrors Claude Code's and 
 
 <img src="https://img.shields.io/badge/Skills-0969da?style=for-the-badge" alt="Skills" />
 
-## Skills
+### Skills
 
 | Skill | Use it when | Writes? |
 |-------|-------------|---------|
@@ -119,8 +123,10 @@ Codex has its own plugin marketplace system; the flow mirrors Claude Code's and 
 | `heal-automated-tests` | Generated specs are failing and need triage + repair. | Spec fixes to the repo; defects/escalations out |
 | `run-automated-tests` | You're executing the suite and recording the outcome. | `origin=automated` run + per-case results to the vault |
 
+---
+
 <img src="https://img.shields.io/badge/License-6e7781?style=for-the-badge" alt="License" />
 
-## License
+### License
 
 MIT — see [LICENSE](LICENSE).
