@@ -81,11 +81,19 @@ force green.**
   with the **`test.fail()` + `issue`-annotation pair** carrying the defect reference (the single
   product-defect encoding — written together, always; see `automate-test-cases` → *Product defects*;
   **not `test.fixme()`**). The inverted expectation keeps the suite green while the bug is open and
-  trips an unexpected pass the day it is fixed; the case **stays un-flipped** until then. **Report it
-  to the engineer.** This harness is traditional QA: it **finds and files**. **Do NOT root-cause into
-  app source, database, or network internals beyond confirming the symptom** — code-level diagnosis
-  belongs to whoever picks up the ticket, a later SDLC stage. Never delete or weaken the spec to hide
-  the failure.
+  trips an unexpected pass the day it is fixed. **A nondeterministic bug — one that fires only under
+  contention, timing, or load — is forced deterministic before it is encoded:** hold the racing
+  response open with route interception until the vulnerable window exists, or inject latency, so the
+  failure fires on **every** run; only then does the `test.fail()` + `issue` pair apply. A flapping
+  signal is never encoded against — if a race **cannot** be forced deterministic, **escalate to the
+  engineer in the report instead of encoding it.** **A case already at `automation: automated`** when
+  the bug surfaces — the flip landed in an earlier session and a later run or this heal exposed the
+  bug — **is returned to un-flipped: `automation` status reverted and `automation_ref` cleared**,
+  until the defect is resolved; the *Product fixed* exit below restores both when the fix lands.
+  **Report it to the engineer.** This harness is traditional QA: it **finds and files**. **Do NOT
+  root-cause into app source, database, or network internals beyond confirming the symptom** —
+  code-level diagnosis belongs to whoever picks up the ticket, a later SDLC stage. Never delete or
+  weaken the spec to hide the failure.
 - **Product fixed** (a `test.fail()` bug spec **unexpectedly passes** — Playwright flags it as an
   unexpected pass, the built-in fix detector; a deterministic signature, not flake) → the product now
   does what the case says. **Remove the `test.fail()` + `issue`-annotation pair**, run the now-honest

@@ -37,6 +37,13 @@ the batch without **explicit confirmation**, granted **per case** — the engine
 candidates and decline others; each approved case's status update lands as part of the approved
 batch. Nothing is auto-included.
 
+**Size the batch by forecast turns, not case count.** Before committing to a batch, forecast the
+session's size from **zone depth × interactivity**, not the number of cases. Zones whose states are
+**URL-addressable** are cheap to recon — a probe reaches them with no attach tax; zones that need
+**provisioned data, modal flows, or realtime-driven UI** cost far more per case. **Split a deep zone
+into sequential batches** rather than exceed what one session holds — a session degrades past roughly
+**250–300 tool turns**, so keep the forecast under that ceiling.
+
 ### 2. Prepare
 
 - **`get_project_rules` first** — per QA Vault MCP guidance, before any substantive work in the
@@ -175,11 +182,22 @@ built-in product-fix detector. The `issue` annotation carries machine-readable t
 travels into the HTML and JSON reports, which is what `run-automated-tests` reads to record the case
 as **blocked** against its defect.
 
+**A nondeterministic bug is forced deterministic before it is encoded.** A product bug that fires
+only under **contention, timing, or load** must not be encoded against a flapping signal — first make
+the failure deterministic (hold the racing response open with route interception until the vulnerable
+window exists, or inject latency) so it fires on **every** run, and only then apply the `test.fail()`
++ `issue` pair with its full fix-detector semantics. If a race genuinely cannot be forced
+deterministic, **escalate to the engineer in the report instead of encoding it** — never leave a
+flapping `fail()` spec behind.
+
 - A `fail()` spec that **provisions real data** does its cleanup in **`try/finally`** — the bug
   throws before the happy path's teardown would run — and sizes **`test.setTimeout`** to cover the
   cleanup's retry budget (per AUTOMATION.md's concurrency note).
 - The case **stays un-flipped** — `automation` unchanged, **no `automation_ref`** — until the
-  product is fixed; the fix is detected and the loop closed by `heal-automated-tests`.
+  product is fixed; the fix is detected and the loop closed by `heal-automated-tests`. A case found
+  **already at `automation: automated`** when the bug surfaces — a spec being re-derived — is
+  **reverted to un-flipped and its `automation_ref` cleared**, to the same held state until the
+  defect is resolved.
 
 ## Discipline
 

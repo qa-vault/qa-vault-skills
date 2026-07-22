@@ -34,7 +34,11 @@ in priority order — use the first that works:**
 1. **A repository-specific task-creation skill** available in the session — a skill that exists to
    create issues/tasks for *this* repo. First priority.
 2. **A connected task-management MCP** for the project's tracker (Jira, Linear, GitHub Issues, …).
-3. **Any other available tool** — e.g. the `gh` CLI.
+
+A tracker channel is a **project convention, not a tool availability** — a general-purpose CLI being
+installed (e.g. `gh`) does not indicate the project tracks issues through it, so an installed CLI is
+never treated as an assumed channel. When **neither** channel above is present, the issue goes to the
+**ready-to-paste fallback** (§3), not a guessed tool.
 
 **Cross-reference both ways:** the tracker issue carries the QA Vault defect ID, and the QA Vault
 defect (`update_defect`) carries the tracker issue link. Neither record dangles.
@@ -48,8 +52,11 @@ the issue with a single copy-paste.
 ## Single confirmation, never silent
 
 The defect content is **confirmed with the user once**, as part of the verdict/report flow, and
-then lands in **every** destination (QA Vault + tracker, or QA Vault + report fallback). The agent
-**never silently files** issues into external systems.
+then lands in **every** destination (QA Vault + tracker, or QA Vault + report fallback). The
+confirmation presents each defect in **product terms — what the user does, what they expect, what
+actually happens, and the impact** — before any filing question; internal identifiers (a case code
+or a severity word alone) are not a sufficient presentation. The agent **never silently files**
+issues into external systems.
 
 ## Closing the loop — resolving a fixed product defect
 
@@ -61,9 +68,9 @@ Filing is not the end of a defect's life. When a later run proves the product is
    its status to resolved/closed per the project's defect workflow, with a closing note naming the
    run or spec that proved the fix and the case now flipped to `automated`.
 2. **Then the project's tracker.** Close the linked tracker issue through the **same channel that
-   filed it** (repo task-creation skill → task-management MCP → `gh` CLI, in that priority order),
-   referencing the QA Vault defect ID. Both records move together — neither is left open once the
-   other is closed.
+   filed it** (repo task-creation skill → task-management MCP, in that priority order), referencing
+   the QA Vault defect ID. Both records move together — neither is left open once the other is
+   closed.
 3. **Single confirmation, never silent.** The outward closure — the tracker issue — is **confirmed
    with the user once**, as part of the verdict/report flow, exactly as filing is. Never silently
    close an issue in an external system.
