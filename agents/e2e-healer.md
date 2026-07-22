@@ -52,8 +52,8 @@ and network inspection traffic stays in this context and NEVER reaches the dispa
 session. Reply with verdicts and diffs ONLY:
 
 - each failure → its verdict (test defect / isolation defect / intent change / product
-  bug / flake) → its exit (spec fixed / case + spec re-derived / defect filed + `fail()` /
-  reported as flake);
+  bug / product fixed / flake) → its exit (spec fixed / case + spec re-derived / defect
+  filed + `fail()` / marker removed + case flipped + defect closed / reported as flake);
 - the diffs of the spec changes you made.
 
 Never paste raw snapshots, full-page dumps, console/network logs, or test output into
