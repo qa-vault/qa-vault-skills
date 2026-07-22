@@ -47,6 +47,13 @@ to run; surface the gap in the report rather than letting it vanish from the res
 **A spec whose provenance-header case no longer exists in the vault — deleted — is reported as
 orphaned.** It does not run and no result is recorded for it.
 
+**Orphan redefinition — a `fail()` bug spec is not an orphan.** A spec whose provenance-header case
+is not at `automation: automated` would normally read as an orphan, **but a `test.fail()`-annotated
+bug spec is the deliberate exception**: its case stays un-flipped on purpose while the defect is
+open, and the spec is a **first-class run participant recorded as `blocked`** (§3), not a dangling
+artifact. The orphan report keeps catching the genuinely dangling specs — a header pointing at a
+**deleted** case, or a non-automated case whose stray spec carries **no** `fail()` annotation.
+
 ### 2. Execute
 
 - **Full scoped run**, retries per `playwright.config.ts`, **list reporter**,
@@ -68,11 +75,20 @@ orphaned.** It does not run and no result is recorded for it.
 - **`create_test_run`** with **`origin: "automated"`**, the `project` code, the in-scope
   `case_ids` (or `template_id`), and title following the convention **`Automated <scope> <date>`**
   (e.g. `Automated smoke-suite 2026-07-20`).
-- **`bulk_record_results`** with one entry per in-scope case whose spec ran or was deliberately not run (`fixme`/skip) — flake and missing-spec cases stay excluded — each with `case_id`, `status`, `comment`:
+- **`bulk_record_results`** with one entry per in-scope case whose spec ran (passed / failed / expected-failure → blocked) or was Playwright-skipped — flake, unexpected-pass ("product fixed") and missing-spec cases stay excluded — each with `case_id`, `status`, `comment`:
   - **`passed`** / **`failed`** per the outcome; every failure's **`comment` = one-line error
     summary + trace pointer** (`<file>:<line> — <assertion/error>; trace: <report or trace path>`).
-  - A spec marked **`test.fixme()` over an open defect** → **`blocked`**, comment = the defect
-    reference. A **Playwright-skipped** spec → **`skipped`**, comment = the skip reason.
+  - **`expectedFailure` with an `issue` annotation** (a `test.fail()` bug spec, failing as expected
+    over a filed defect) → **`blocked`**, comment = **`Blocked by <issue url from the annotation>`**.
+    The annotation rides into the JSON report, so the reference is read straight from it.
+  - **`expectedFailure` without an `issue` annotation** → **`blocked`** with **no** reference, **and
+    flagged in the report**: *"unannotated known failure — add the `issue` annotation"* (the pair is
+    incomplete; the annotation must always accompany `test.fail()`).
+  - **An unexpected pass on a `test.fail()` spec** (the product was fixed) → **record nothing** for
+    that case; **flag it** *"product fixed — heal removes the marker"* and include it in the failure
+    handoff to `heal-automated-tests`. The unexpected pass turns the suite red, so 0.4.2's artifact
+    capture applies to it like any other failure.
+  - A **Playwright-skipped** spec → **`skipped`**, comment = the skip reason.
   - **Flake gets NO recorded result** — it appears in the report as flake only.
 - **`complete_test_run`** once the scope fully executed — leave the run active if execution was
   partial. **Missing-spec cases (Scope) sit outside the executable scope** — reported, but they do
@@ -91,7 +107,9 @@ Real failures needing repair are queued as **explicit input for `heal-automated-
 **one line each: `<file>:<line>` + one-line error summary.** Capture into that handoff, at run
 time, the **verbatim Playwright error + call-log** and the **`test-results/*/error-context.md`**
 path(s) for each failure — the artifacts are already on disk, so attaching them is free, while a
-paraphrase forces the healer to re-derive the failure. This skill records; it does not fix.
+paraphrase forces the healer to re-derive the failure. **Unexpected passes on `test.fail()` specs
+(product fixed) join this handoff too** — heal removes the marker, runs the spec green, flips the
+case, and closes the defect. This skill records; it does not fix.
 **The engineer decides whether healing runs now** or later — never auto-invoke it. **Defects for
 those queued failures are filed by `heal-automated-tests`' triage** — per
 [skills/heal-automated-tests/references/defect-propagation.md](skills/heal-automated-tests/references/defect-propagation.md),
