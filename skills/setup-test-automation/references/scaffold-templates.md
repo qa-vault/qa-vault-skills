@@ -208,15 +208,36 @@ test("probe", async ({ page }) => {
   const out = process.env.PROBE_OUT ?? `e2e/recon/${slug}.aria.md`; // optional override
 
   await page.goto(url);
-  // Web-first visibility wait before snapshotting — no banned fixed waits.
-  await expect(page.locator("body")).toBeVisible();
-  const snapshot = await page.locator("body").ariaSnapshot();
+  // Settle before snapshotting — a bare visibility wait passes while an SPA still shows its
+  // loading state, and a transient state is itself "stable" between two quick reads. Layered,
+  // product-agnostic signals: no [aria-busy="true"] anywhere, then the aria structure unchanged
+  // vs a read at least 600ms older (the gap gate keeps two back-to-back reads of a transient
+  // state from passing as "stable"). If the page never settles, fall through and flag it —
+  // the probe never leaves the caller empty-handed.
+  let snapshot = await page.locator("body").ariaSnapshot();
+  let readAt = Date.now();
+  let settled = true;
+  try {
+    await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+    await expect(async () => {
+      const now = Date.now();
+      const next = await page.locator("body").ariaSnapshot();
+      const stable = now - readAt >= 600 && next === snapshot;
+      snapshot = next;
+      readAt = now;
+      expect(stable).toBe(true);
+    }).toPass({ intervals: [750], timeout: 15_000 });
+  } catch {
+    settled = false;
+  }
 
-  // Two-line header (final URL after redirects, capture timestamp) then the snapshot, fenced.
+  // Header (final URL after redirects, capture timestamp, settle warning when needed),
+  // then the snapshot, fenced.
   const doc =
     `final URL: ${page.url()}\n` +
-    `captured at: ${new Date().toISOString()}\n\n` +
-    `\`\`\`yaml\n${snapshot}\n\`\`\`\n`;
+    `captured at: ${new Date().toISOString()}\n` +
+    (settled ? "" : "warning: structure still changing after 15s — snapshot may be transient\n") +
+    `\n\`\`\`yaml\n${snapshot}\n\`\`\`\n`;
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, doc);
   console.log(`probe → ${out}`);
