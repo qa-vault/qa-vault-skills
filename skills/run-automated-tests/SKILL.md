@@ -88,6 +88,12 @@ artifact. The orphan report keeps catching the genuinely dangling specs — a he
     that case; **flag it** *"product fixed — heal removes the marker"* and include it in the failure
     handoff to `heal-automated-tests`. The unexpected pass turns the suite red, so 0.4.2's artifact
     capture applies to it like any other failure.
+  - **A `test.fail()` spec in the FAILED list is not automatically news.** `test.fail()` absorbs
+    assertion failures but **not timeouts**: under worker contention a fail() spec that times out
+    lands among the failures without its expected verdict. Before treating any fail()-spec outcome
+    as "product fixed" or "new failure", read the failure mode — a **timeout** means the spec never
+    reached the guarded behavior. Rerun it in isolation: expected-failure restored → report as
+    contention flake (no recorded result, no heal handoff); anything else → classify normally.
   - A **Playwright-skipped** spec → **`skipped`**, comment = the skip reason.
   - **Flake gets NO recorded result** — it appears in the report as flake only.
 - **`complete_test_run`** once the scope fully executed — leave the run active if execution was

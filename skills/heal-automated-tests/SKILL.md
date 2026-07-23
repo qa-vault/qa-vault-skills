@@ -139,3 +139,8 @@ Stamped, non-negotiable:
   intent.
 - **Screenshots** — only when a human will look at them.
 - **Models** — Sonnet-class models are sufficient and preferred for authoring/healing loops.
+- **Context isolation** — triage is snapshot-heavy; run it in a sub-agent that returns verdicts
+  and diffs only: on Claude Code, the plugin's `e2e-healer` companion agent; on Codex CLI, spawn
+  the built-in `worker` with the failing spec(s) and this skill as its instruction set. Hand the
+  sub-agent the verbatim error + call-log + `error-context.md` paths — a paraphrased symptom
+  multiplies its repro work.
