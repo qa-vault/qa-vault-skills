@@ -92,7 +92,15 @@ same area reads the map instead of the browser.
 
 Transcribe the case's steps into a spec. Rules:
 
-- **Path:** `e2e/tests/<area>/<kebab-case-scenario>.spec.ts`.
+- **Path:** `e2e/tests/<area>/<kebab-case-scenario>.spec.ts` — `<area>` is the **semantic UI
+  zone**, aligned with APP-MAP's section headings; specs never sit at the tests root. The
+  directory layout deliberately does **not** mirror the vault's suite tree: the case link lives
+  in the provenance header, not the path, so suites stay free to be renamed and reorganized
+  without moving a single file.
+- **One case = one spec file.** The file carries this one case's provenance header and proves
+  this one case's full scenario — several `test()` blocks are fine when they all prove it.
+  Never share a file between cases: a test inside a file has no stable address, while the file
+  path is exactly what `automation_ref` points at.
 - **Import** `test`/`expect` from `../fixtures` (the contract's fixtures path), never raw
   `@playwright/test`.
 - **Provenance header** — every spec opens with, verbatim:
