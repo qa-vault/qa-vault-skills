@@ -82,7 +82,9 @@ approves it.
 1. **Link the clean matches** — provenance header + `automation_ref` write-back. Nothing else
    changes.
 2. **Zone retrofits** — bring MATCH/PARTIAL specs to the contract (fixtures, relative URLs,
-   entropy, try/finally cleanup, self-provisioned isolation) and add the case steps PARTIALs skip.
+   entropy, try/finally cleanup, self-provisioned isolation), relocate misplaced files into their
+   semantic-zone directory per `automate-test-cases`' path rule (a relocation changes the file
+   path — the case's `automation_ref` moves with it), and add the case steps PARTIALs skip.
    Verify each zone green before moving on.
 3. **Consolidations and splits** — merge split-case pairs into one spec, break collapsed files
    into one spec per case, split multi-test files. **A source file is deleted only after its
