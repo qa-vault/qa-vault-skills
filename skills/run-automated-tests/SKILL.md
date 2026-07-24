@@ -56,26 +56,55 @@ artifact. The orphan report keeps catching the genuinely dangling specs — a he
 
 ### 2. Execute
 
-- **Full scoped run**, retries per `playwright.config.ts`, **list reporter**,
-  `PLAYWRIGHT_HTML_OPEN=never`. Execution is **headless via `npx playwright test`** — no
-  browser-driving needed. The resolved spec paths from **Scope** are passed as file arguments:
-  `npx playwright test <paths…>`.
-- **Rerun every failure once in isolation before classifying it.** A pass on the isolated rerun is
-  **not automatically flake**: first check the original failure's signature for data/state
-  collision — unique-name violations, entities from another spec, leftover records — and that
-  signature means an **isolation defect**, not flake. Only a **signature-less, non-recurring**
-  isolated-pass is flake.
+- Resolve `scripts/run-playwright.mjs` relative to this `SKILL.md` and invoke it once from the
+  target repository. Pass every resolved spec path after `--`:
+
+  ```bash
+  node <skill-dir>/scripts/run-playwright.mjs \
+    --root "$PWD" \
+    --test-dir e2e/tests \
+    --project chromium \
+    -- <paths...>
+  ```
+
+- The runner executes the full scope headlessly in one native Playwright process, honoring
+  `playwright.config.ts` for workers, retries, and timeouts. It forces only isolated reruns to
+  `--workers=1`. `PLAYWRIGHT_HTML_OPEN=never` and the JSON reporter are set by the runner.
+- Full JSON and terminal output stay on disk under
+  `test-results/qa-vault/<timestamp>/`; the runner prints only the artifact path, case counts,
+  review count, run-error count, and rerun-guard status. **Do not open or print `initial.json` or
+  `initial.log` wholesale.** Read `summary.json`; inspect a full artifact only for a specific
+  unresolved test.
+- Launch one runner process. Do not poll per test, stream the log, drive a browser, or narrate
+  individual progress. If the execution tool yields a process handle, wait on that same handle
+  with no output injection until it completes.
+- The runner reruns each unexpected failure once as its own `file:line` Playwright invocation.
+  It auto-reruns at most 10 failures. More than 10 sets `rerun_guard.triggered=true` and leaves
+  the failures in `review_required`; stop before recording and ask the engineer whether to
+  investigate the broad failure or authorize a larger rerun.
+- An isolated pass is **not automatically flake**. `summary.json` places it in
+  `review_required` with `isolated_pass`; check the original signature for data/state collision.
+  Unique-name violations, entities from another spec, or leftover records mean an **isolation
+  defect**, not flake. Only a signature-less, non-recurring isolated pass is flake.
 - **Flake is reported as flake — never recorded as a failed result.** A collision-signature
   failure is a real failure — recorded as `failed` and queued for heal.
-- **Classification uses test output + the isolated rerun only.** Anything that needs live-page
-  inspection is `heal-automated-tests`' job, not this skill's.
+- **Classification uses `summary.json`, a specific test's artifact when needed, and its isolated
+  rerun only.** Anything that needs live-page inspection is `heal-automated-tests`' job, not this
+  skill's.
 
 ### 3. Record
 
 - **`create_test_run`** with **`origin: "automated"`**, the `project` code, the in-scope
   `case_ids` (or `template_id`), and title following the convention **`Automated <scope> <date>`**
   (e.g. `Automated smoke-suite 2026-07-20`).
-- **`bulk_record_results`** with one entry per in-scope case whose spec ran (passed / failed / expected-failure → blocked) or was Playwright-skipped — flake, unexpected-pass ("product fixed") and missing-spec cases stay excluded — each with `case_id`, `status`, `comment`:
+- Create the run **only after** `rerun_guard.triggered=false`, `run_errors` is empty, and every
+  `review_required` item has been classified. This prevents a partial or mixed execution from
+  becoming a misleading run.
+- **`bulk_record_results`** using the resolved entries from `summary.json.results`, plus any
+  engineer-reviewed isolation verdicts. There is one entry per in-scope case whose spec ran
+  (passed / failed / expected-failure → blocked) or was Playwright-skipped — flake,
+  unexpected-pass ("product fixed") and missing-spec cases stay excluded — each with `case_id`,
+  `status`, `comment`:
   - **`passed`** / **`failed`** per the outcome; every failure's **`comment` = one-line error
     summary + trace pointer** (`<file>:<line> — <assertion/error>; trace: <report or trace path>`).
   - **`expectedFailure` with an `issue` annotation** (a `test.fail()` bug spec, failing as expected
@@ -126,8 +155,10 @@ resolves (path relative to the plugin root) — and linked back to the run resul
 
 Stamped, non-negotiable:
 
-- **Reporter** — minimal **list reporter**, `PLAYWRIGHT_HTML_OPEN=never`, headless
-  `npx playwright test`; no full-page snapshot enters context (diagnosis is heal's job).
+- **Reporter** — artifact-first JSON through `scripts/run-playwright.mjs`; full reports and logs
+  stay on disk, and only `summary.json` enters context by default.
+- **Execution** — one native runner process, no per-test browser driving, log streaming, or
+  controller-side classification while Playwright is still running.
 - **Isolation** — every failure rerun once in isolation **before** it is classified.
 - **Honesty** — flake is reported as flake and **never recorded as a failed result**; the run
   records only what actually happened.
