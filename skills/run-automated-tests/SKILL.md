@@ -145,8 +145,14 @@ path(s) for each failure — the artifacts are already on disk, so attaching the
 paraphrase forces the healer to re-derive the failure. **Unexpected passes on `test.fail()` specs
 (product fixed) join this handoff too** — heal removes the marker, runs the spec green, flips the
 case, and closes the defect. This skill records; it does not fix.
-**The engineer decides whether healing runs now** or later — never auto-invoke it. **Defects for
-those queued failures are filed by `heal-automated-tests`' triage** — per
+**Once the run is recorded, invoke `heal-automated-tests` on the queued failures automatically** —
+do not park them for permission first. Healing is the point of the loop, and heal already gates the
+only irreversible steps itself: it fixes test and isolation defects and re-derives on intent change
+without asking, and stops for a **single product-terms confirmation** only when its triage confirms
+a **product bug** (filing a defect) or a **product-fixed** case (closing one). Everything it touches
+lands **uncommitted** for engineer review. So the run→heal handoff needs no separate gate; the
+engineer's decisions happen inside heal, exactly where an outward or irreversible action is about to
+occur. **Defects for those failures are filed by `heal-automated-tests`' triage** — per
 [skills/heal-automated-tests/references/defect-propagation.md](skills/heal-automated-tests/references/defect-propagation.md),
 which lives in the heal skill's directory; the plugin ships as one tree, so the relative path
 resolves (path relative to the plugin root) — and linked back to the run results recorded here.
