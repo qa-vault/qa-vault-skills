@@ -24,7 +24,9 @@ qa-vault-skills/
 │   ├── heal-automated-tests/
 │   │   ├── SKILL.md
 │   │   └── references/defect-propagation.md
-│   └── run-automated-tests/SKILL.md
+│   └── run-automated-tests/
+│       ├── SKILL.md
+│       └── scripts/                    # Native runner, JSON parser, parser tests
 ├── agents/                             # Claude Code subagents (Codex runs skills inline)
 │   ├── e2e-author.md
 │   └── e2e-healer.md
@@ -41,7 +43,7 @@ The `skills/` directory is the **single source of truth** for skill content. Bot
 
 ## Skills overview
 
-Eight self-contained skills, auto-discovered from `skills/`, in two families — **manual QA practice** (the QA Vault content lifecycle) and the **e2e automation harness** (Playwright generation, healing, and reporting). Each embeds its operating-discipline rules inline (there is no shared conventions skill).
+Nine self-contained skills, auto-discovered from `skills/`, in two families — **manual QA practice** (the QA Vault content lifecycle) and the **e2e automation harness** (Playwright generation, healing, and reporting). Each embeds its operating-discipline rules inline (there is no shared conventions skill).
 
 **Manual QA practice:**
 
@@ -55,7 +57,7 @@ Eight self-contained skills, auto-discovered from `skills/`, in two families —
 - **`setup-test-automation`** — one-time repo bootstrap. Interviews the engineer with argued recommendations, scaffolds Playwright + playwright-cli, the seed test and fixtures, and the per-project `AUTOMATION.md` / `APP-MAP.md` contract files every other automation skill reads before it runs.
 - **`automate-test-cases`** — turns QA Vault manual cases into verified Playwright specs. Fetches cases via the MCP, transcribes their steps, verifies against the live app with playwright-cli, links spec↔case both ways, and updates automation status. Requires the `setup-test-automation` contract.
 - **`heal-automated-tests`** — triages failing specs (test defect / isolation defect / intent change / product bug), fixes only what belongs to the test, and escalates the rest — case updates via `maintain-test-cases`, defects into QA Vault plus the project's tracker.
-- **`run-automated-tests`** — the reporting leg. Runs the specs, separates flake from failure, records an `origin=automated` test run with per-case results via the MCP, and queues real failures for `heal-automated-tests`.
+- **`run-automated-tests`** — the reporting leg. Runs specs through an artifact-first native runner, parses a compact per-case summary, separates flake from failure, records an `origin=automated` test run with per-case results via the MCP, and queues real failures for `heal-automated-tests`.
 
 ## Agents
 
@@ -82,4 +84,4 @@ Both ecosystems pull this plugin from the `qa-vault/marketplace` catalog repo:
 - **Claude Code** marketplace entry uses `source: "github"` with `repo: "qa-vault/qa-vault-skills"`.
 - **Codex CLI** discovers skills from `skills/` via the `.codex-plugin/plugin.json` manifest.
 
-When adding or changing skills, keep `skills/` as the single source of truth, keep both manifests' metadata in sync, and keep the eight one-line summaries above accurate. See `README.md` for the user-facing description.
+When adding or changing skills, keep `skills/` as the single source of truth, keep both manifests' metadata in sync, and keep the nine one-line summaries above accurate. See `README.md` for the user-facing description.
