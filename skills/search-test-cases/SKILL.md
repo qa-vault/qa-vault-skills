@@ -19,10 +19,16 @@ Use the QA Vault MCP tools listed below. If another test-management MCP is also 
 |------|--------------|-------------------|
 | `search_test_cases(project, query)` | Case-insensitive **substring** match on the case **title** | You know roughly what the case is called; a fast literal check |
 | `list_test_cases(project, …filters)` | Structured **listing/filtering** by `suite_id` / `tags` / `priority` / `status` / `layer` (+ `search`, `fields`, `include`, `limit`/`offset`) | You want a **complete** scoped set — the only mode that enumerates exhaustively (paginate past the limit) |
-| `smart_search_cases(project, query, …filters, threshold=0.3)` | **Semantic** vector search ranked by `similarity` | You're searching by **meaning/concept**, where the title may not share keywords; default threshold favors recall |
-| `find_related_cases(case_id, threshold=0.5)` | **"More like this"** from one existing case | You have a seed case and want its overlap/neighbors |
+| `smart_search_cases(project, query, …filters)` | **Semantic** vector search — the server selects what is relevant and labels each hit `relevance: strong` or `related` | You're searching by **meaning/concept**, where the title may not share keywords |
+| `find_related_cases(case_id)` | **"More like this"** from one existing case, under the same relevance selection | You have a seed case and want its overlap/neighbors |
 
 For valid filter values (priority, layer, status, …), call `get_field_options` — don't guess them.
+
+Both semantic tools accept an optional `threshold`, and it is **not** a routine parameter — there is no per-call default to tune. Relevance selection is calibrated inside the server, per mode; `threshold` only overrides the absolute floor that decides whether anything is relevant at all. Use it in exactly one situation: a search came back empty and you want to widen it deliberately — pass a *lower* value. Never raise it hoping for better matches.
+
+## Phrasing a semantic query
+
+Describe what the test does in a full phrase — semantic search matches meaning, so "user resets a forgotten password from the login screen" retrieves its target reliably. Very short queries (two to four words) retrieve their target only about half the time and may clear nothing at all — describe the behaviour rather than guessing keywords. For exact wording or an id, use `list_test_cases` with its `search` parameter instead.
 
 ## Choosing and combining
 
@@ -33,10 +39,14 @@ For valid filter values (priority, layer, status, …), call `get_field_options`
 
 ## Presenting results
 
-Inline, ranked: case id (number) + title + suite + `similarity`/score. Say which searches you ran, so the engineer sees the lookup was thorough rather than one lucky keyword. Put a low-confidence tail under a separate "borderline — your call" heading instead of silently including or dropping it. Save results to a file only if asked.
+Inline, ranked: case id (number) + title + suite + the `relevance` tier the server returned. Say which searches you ran, so the engineer sees the lookup was thorough rather than one lucky keyword. When a response comes back `truncated`, say how many of how many you are showing (`total_matched`) and then either raise `limit` and search again or state why the top slice is enough — never let a partial list read as the whole answer. Don't print raw similarity numbers — the server has already turned the score into a tier, and a cosine value reads like a percentage it isn't. Save results to a file only if asked.
+
+## How far to trust the relevance tier
+
+The tier is an aid, not a verdict — but re-scoring the results by hand throws away the calibration that produced it, so take the ranking as given and spend your judgement on the content instead. `strong` means the match cleared an absolute bar: a strong starting point, not a confirmed answer. `related` may mean nothing more than shared vocabulary. Read every returned title, and open the leading candidates with `get_test_case` before acting on them — always before calling something a duplicate or declaring an area covered. When the response says there are no strong matches, that is a signal to rephrase or widen the search, not permission to present the top row as the answer.
 
 ## Boundaries
 
 - **Read-only.** Never create/update/delete from this skill.
-- **No coverage/gap tool exists.** You may inventory what exists and point out thin or empty areas, but say plainly that "missing" is your **inference** from a wide search against a mental checklist — not a computed coverage report.
+- **`analyze_coverage_gaps` is a hint, not a coverage report.** The tool exists — give it a list of requirements and it returns `well-covered` / `partially-covered` / `gap` for each. But every verdict is bucketed from the **top-1 similarity of the single best-matching case**, and calibration measured that this signal does not track how much of a requirement is actually covered: across six human-labelled requirements the best achievable agreement was **67% (4 of 6)**, and the two labelled *partially covered* scored *lower* than the two labelled *not covered at all* — an inversion no pair of thresholds on one number can resolve. The redesign is filed as `qa-vault/qa-vault#28`. So use it to point at areas worth checking, confirm any verdict yourself with `get_test_case`, and call it a hint whenever you pass it on. This skill stays retrieval-only either way: you may inventory what exists and point out thin or empty areas, but a "missing" claim is your **inference**, never a computed coverage report.
 - If the request is ambiguous (which project? what scope?), state your interpretation or ask before searching.
