@@ -13,18 +13,21 @@ QA Vault offers several ways to find cases. Picking the right mode — and combi
 
 Use the QA Vault MCP tools listed below. If another test-management MCP is also connected in the session (for example `qase`), **do not use it here** — it is a separate system with different cases. Inspect a QA Vault case with QA Vault's own `get_test_case`, not a look-alike tool from another server.
 
-## The four search modes
+## The search modes
 
 | Tool | What it does | Reach for it when |
 |------|--------------|-------------------|
-| `search_test_cases(project, query)` | Case-insensitive **substring** match on the case **title** | You know roughly what the case is called; a fast literal check |
+| `search_test_cases(project, query)` | Case-insensitive **substring** match on the case **title**; returns a page plus `total_count` | You know roughly what the case is called; a fast literal check |
 | `list_test_cases(project, …filters)` | Structured **listing/filtering** by `suite_id` / `tags` / `priority` / `status` / `layer` (+ `search`, `fields`, `include`, `limit`/`offset`) | You want a **complete** scoped set — the only mode that enumerates exhaustively (paginate past the limit) |
 | `smart_search_cases(project, query, …filters)` | **Semantic** vector search — the server selects what is relevant and labels each hit `relevance: strong` or `related` | You're searching by **meaning/concept**, where the title may not share keywords |
 | `find_related_cases(case_id)` | **"More like this"** from one existing case, under the same relevance selection | You have a seed case and want its overlap/neighbors |
+| `suggest_cases_for_defect(project, defect_title, …)` | Semantic search **from a defect** rather than a query, same relevance selection | You have a bug and want the cases covering the area it landed in |
 
 For valid filter values (priority, layer, status, …), call `get_field_options` — don't guess them.
 
 Both semantic tools accept an optional `threshold`, and it is **not** a routine parameter — there is no per-call default to tune. Relevance selection is calibrated inside the server, per mode; `threshold` only overrides the absolute floor that decides whether anything is relevant at all. Use it in exactly one situation: a search came back empty and you want to widen it deliberately — pass a *lower* value. Never raise it hoping for better matches.
+
+`limit` is the same kind of parameter: **omit it.** The semantic modes set no default — the server returns everything its selection accepted, which is already bounded — so a `limit` can only ever hide matches the server judged relevant. Pass one only when you deliberately want a short list, and read the `total_matched` the response then carries. The listing modes are different: `list_test_cases` and the title search return a *page* plus the true `total_count`, and you page with `offset`. There, a returned page smaller than the total is normal; leaving it unread is not.
 
 ## Phrasing a semantic query
 
@@ -39,7 +42,9 @@ Describe what the test does in a full phrase — semantic search matches meaning
 
 ## Presenting results
 
-Inline, ranked: case id (number) + title + suite + the `relevance` tier the server returned. Say which searches you ran, so the engineer sees the lookup was thorough rather than one lucky keyword. When a response comes back `truncated`, say how many of how many you are showing (`total_matched`) and then either raise `limit` and search again or state why the top slice is enough — never let a partial list read as the whole answer. Don't print raw similarity numbers — the server has already turned the score into a tier, and a cosine value reads like a percentage it isn't. Save results to a file only if asked.
+Inline, ranked: case id (number) + title + suite + the `relevance` tier the server returned. Say which searches you ran, so the engineer sees the lookup was thorough rather than one lucky keyword. Don't print raw similarity numbers — the server has already turned the score into a tier, and a cosine value reads like a percentage it isn't. Save results to a file only if asked.
+
+**Never let a partial list read as the whole answer.** Any response carrying `truncated` also carries the real total (`total_matched` for the semantic modes, `total_count` for the listing ones): say how many of how many you are showing, then either fetch the rest — drop the `limit` you set, or page with `offset` — or state why the top slice is enough. A page that came back full is not evidence there is nothing after it; the total is.
 
 ## How far to trust the relevance tier
 

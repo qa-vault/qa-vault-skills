@@ -6,7 +6,7 @@ The content skills (`create-test-cases`, `maintain-test-cases`) include a **vali
 
 **Manual QA practice:**
 
-- **`search-test-cases`** — find existing cases: the four QA Vault search modes (title, filtered, semantic, related) and when to use each. Read-only.
+- **`search-test-cases`** — find existing cases: the QA Vault search modes (title, filtered, semantic, related, defect-seeded) and when to use each. Read-only.
 - **`create-test-cases`** — author manual UI end-to-end scenarios from a spec, ticket, code, or conversation. Drafts for review — flagging suspicious implemented behavior (possible bugs) for the engineer to resolve — then writes to the vault.
 - **`maintain-test-cases`** — keep the repository in sync after development changes: update stale cases, add new coverage, remove what's obsolete — in one reviewed changeset, flagging suspicious changed behavior (possible regressions) for the engineer to resolve.
 - **`organize-test-repository`** — restructure and clean up suites, tags, and case order; audit for sprawl and duplicates.

@@ -35,7 +35,7 @@ Consolidate near-duplicates with `merge_tags(sources, into)` — it re-tags ever
 
 There is **no "merge cases" tool**, so organize only **flags** likely duplicates — never auto-resolves them.
 
-1. Find candidates: `find_related_cases` on a seed case, plus near-identical titles. Its relevance selection is deliberately **recall-first** — a missed duplicate costs more than a candidate you dismiss — so let it return the whole family and don't try to tighten it with `threshold` (that moves the absolute relevance floor, not the ranking). Precision for a merge or delete comes from step 2, not from the search.
+1. Find candidates: `find_related_cases` on a seed case, plus near-identical titles. Its relevance selection is deliberately **recall-first** — a missed duplicate costs more than a candidate you dismiss — so let it return the whole family: pass no `limit` (it has no default, and one can only hide members) and don't try to tighten it with `threshold` (that moves the absolute relevance floor, not the ranking). Precision for a merge or delete comes from step 2, not from the search.
 2. Confirm **every** candidate, including ones labelled `relevance: strong` — the tier is a starting point, not a verdict: `get_test_case` on **both** and compare full content (steps, expected results, preconditions) — not titles. A positive case and its negative are related but **not** duplicates.
 3. For each confirmed pair, let the **engineer decide per pair** — keep / deprecate / delete — with **no default action**.
 4. Before removing a duplicate, **reconcile** anything unique it carries (tags via `merge_tags`; step/precondition content by hand) into the survivor, or that content is lost permanently.

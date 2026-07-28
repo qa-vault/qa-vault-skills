@@ -15,6 +15,7 @@ qa-vault-skills/
 │   │   └── references/scenario-examples.md
 │   ├── maintain-test-cases/SKILL.md
 │   ├── organize-test-repository/SKILL.md
+│   ├── reconcile-test-suite/SKILL.md
 │   ├── setup-test-automation/
 │   │   ├── SKILL.md
 │   │   └── references/scaffold-templates.md
@@ -47,7 +48,7 @@ Nine self-contained skills, auto-discovered from `skills/`, in two families — 
 
 **Manual QA practice:**
 
-- **`search-test-cases`** — read-only retrieval. Teaches the four QA Vault search modes (title `search_test_cases`, filtered `list_test_cases`, semantic `smart_search_cases`, related `find_related_cases`) and when to use/combine each. The two semantic modes are relevance-selected server-side and tag every hit `strong` or `related`, so the skill also covers query phrasing and how far to trust a tier. Pure retrieval: it produces no coverage report of its own — `analyze_coverage_gaps` does exist as a separate MCP tool, and the skill explains why its verdicts are a hint rather than a report.
+- **`search-test-cases`** — read-only retrieval. Teaches the QA Vault search modes (title `search_test_cases`, filtered `list_test_cases`, semantic `smart_search_cases`, related `find_related_cases`, defect-seeded `suggest_cases_for_defect`) and when to use/combine each. The three semantic modes are relevance-selected server-side and tag every hit `strong` or `related`, so the skill also covers query phrasing, how far to trust a tier, and why neither `threshold` nor `limit` is a routine parameter. Pure retrieval: it produces no coverage report of its own — `analyze_coverage_gaps` does exist as a separate MCP tool, and the skill explains why its verdicts are a hint rather than a report.
 - **`create-test-cases`** — author manual **UI end-to-end scenarios** (one scenario = one case with many steps). Stages work as a `qa-vault/` Markdown draft for human review/approval, then transfers to the vault and deletes the draft. Sets a fixed required-field set (incl. `automation: not_automated` and high-level, reuse-first tags); other metadata only on request. A validation phase flags implemented-but-suspicious behavior (`⚠️ VALIDATE`, draft-only) and blocks transfer until the engineer resolves each flag.
 - **`maintain-test-cases`** — change-driven sync. Explores a development change, finds affected/outdated cases, and produces one reviewed changeset (update / author net-new / delete obsolete) staged in the shared case-block format with `[UPDATE/NEW/REMOVE]` prefixes. A validation phase flags implemented-but-suspicious changes (`⚠️ VALIDATE`, draft-only — e.g. a change contradicting a previously approved expected result) and blocks apply until each flag is resolved. Preserves an existing case's `automation` status; never overwrites it silently.
 - **`organize-test-repository`** — structural housekeeping (suites, tags, case order) in reactive and proactive-audit modes. Previews plans in chat (no draft files); flags duplicate cases for per-pair decision rather than auto-resolving.
@@ -57,6 +58,7 @@ Nine self-contained skills, auto-discovered from `skills/`, in two families — 
 - **`setup-test-automation`** — one-time repo bootstrap. Interviews the engineer with argued recommendations, scaffolds Playwright + playwright-cli, the seed test and fixtures, and the per-project `AUTOMATION.md` / `APP-MAP.md` contract files every other automation skill reads before it runs.
 - **`automate-test-cases`** — turns QA Vault manual cases into verified Playwright specs. Fetches cases via the MCP, transcribes their steps, verifies against the live app with playwright-cli, links spec↔case both ways, and updates automation status. Requires the `setup-test-automation` contract.
 - **`heal-automated-tests`** — triages failing specs (test defect / isolation defect / intent change / product bug), fixes only what belongs to the test, and escalates the rest — case updates via `maintain-test-cases`, defects into QA Vault plus the project's tracker.
+- **`reconcile-test-suite`** — adopting a repository whose e2e specs predate the vault linkage. Classifies every unlinked spec against the vault (searching for its counterpart rather than scanning titles), then links, retrofits, and consolidates per an engineer-approved map, authoring new cases only for true gaps.
 - **`run-automated-tests`** — the reporting leg. Runs specs through an artifact-first native runner, parses a compact per-case summary, separates flake from failure, records an `origin=automated` test run with per-case results via the MCP, and queues real failures for `heal-automated-tests`.
 
 ## Agents
