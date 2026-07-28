@@ -25,10 +25,10 @@ the engineer to `setup-test-automation` — never improvise a partial contract.
 - **`get_project_rules` first** — per QA Vault MCP guidance, before any substantive work in the
   project. The `project` code comes from AUTOMATION.md's **QA Vault project** section.
 
-Three input shapes: **all automated cases** (cases at `automation: automated`), **a suite**
-(resolve it to its cases), or **the specs matching a QA Vault run template**. When the caller gives
-**no scope**, propose **all automated cases** and **confirm before running** — never start an
-unbounded run unasked.
+Three input shapes: **every mapped spec** (every spec whose provenance header resolves to a case
+that still exists, whatever that case's `automation` value), **a suite** (resolve it to its cases),
+or **the specs matching a QA Vault run template**. When the caller gives **no scope**, propose
+**every mapped spec** and **confirm before running** — never start an unbounded run unasked.
 
 **Resolve spec↔case pairs by grepping provenance headers** — every generated spec opens with
 `// qa-vault: project=<code> case=<case_id>`, so a grep across `e2e/tests/` maps each spec to its
@@ -44,15 +44,29 @@ a re-derivation candidate for `automate-test-cases`.
 update the case's `automation_ref`, or restore/relocate the spec). It is in scope but has no artifact
 to run; surface the gap in the report rather than letting it vanish from the results.
 
-**A spec whose provenance-header case no longer exists in the vault — deleted — is reported as
-orphaned.** It does not run and no result is recorded for it.
+**Execution scope and recording scope are not the same set.** Every spec whose header resolves to a
+case that still exists **runs**, whatever that case's `automation` value. A case's status changes how
+its result is *recorded* (§3); it never decides whether the spec is *executed*.
 
-**Orphan redefinition — a `fail()` bug spec is not an orphan.** A spec whose provenance-header case
-is not at `automation: automated` would normally read as an orphan, **but a `test.fail()`-annotated
-bug spec is the deliberate exception**: its case stays un-flipped on purpose while the defect is
-open, and the spec is a **first-class run participant recorded as `blocked`** (§3), not a dangling
-artifact. The orphan report keeps catching the genuinely dangling specs — a header pointing at a
-**deleted** case, or a non-automated case whose stray spec carries **no** `fail()` annotation.
+**Why that separation is not negotiable.** A spec's own outcome is the only evidence of whether it
+still holds. A spec that does not run produces no evidence, so gating execution on a vault attribute
+makes that attribute self-perpetuating: the case stays un-flipped because its spec never ran, and its
+spec never runs because the case is un-flipped. Nothing inside the loop can break it. The specs it
+swallows are the ones `heal-automated-tests` just repaired — cover for freshly fixed product
+behavior, which is the coverage a regression can least afford to lose. Not running a spec is also the
+one call that cannot be revisited from the artifacts afterwards, so it is reserved for the specs that
+have nothing left to run against.
+
+**The only true orphan is a header pointing at a case that no longer exists.** There is no case to
+record against and none to flip, so it does not run and nothing is recorded. Report it with its file
+path so the engineer can re-point the header or delete the spec.
+
+**A `fail()` bug spec is a first-class run participant.** Its case stays un-flipped on purpose while
+the defect is open; it runs and is recorded as `blocked` (§3).
+
+**A non-automated case whose spec carries no `fail()` annotation is a flip candidate, not an
+orphan** — nearly always a spec `heal-automated-tests` repaired after the product was fixed, whose
+case flip was never made. It runs like any other spec, and §3 records it and reports the flip.
 
 ### 2. Execute
 
@@ -123,6 +137,12 @@ artifact. The orphan report keeps catching the genuinely dangling specs — a he
     as "product fixed" or "new failure", read the failure mode — a **timeout** means the spec never
     reached the guarded behavior. Rerun it in isolation: expected-failure restored → report as
     contention flake (no recorded result, no heal handoff); anything else → classify normally.
+  - **A case not at `automation: automated` whose spec carries no `fail()` annotation** records its
+    outcome like any other spec — and a **pass is the evidence the flip was missing**. Report each
+    such passing case as a flip candidate (`not_automated` → `automated`), naming the run and result
+    that prove it, and apply it with `update_test_case` only on the engineer's confirmation — this
+    leg records, so it never rewrites case metadata unasked. A **failing** one is not flipped: it
+    joins the heal handoff like any other failure.
   - A **Playwright-skipped** spec → **`skipped`**, comment = the skip reason.
   - **Flake gets NO recorded result** — it appears in the report as flake only.
 - **`complete_test_run`** once the scope fully executed — leave the run active if execution was
@@ -137,6 +157,11 @@ around it.
 
 **STALE specs (Scope) are listed as re-derivation candidates for `automate-test-cases`** — a spec
 whose header version lags its case's current version, surfaced for the engineer to decide on.
+
+**Flip candidates (§3) are listed for the engineer's confirmation** — each a green spec whose case
+is still `not_automated`, with the run and result that prove it. A growing list of them means heal
+is landing repairs without flipping cases; say so, because the missing flips are what this leg
+would once have quietly stopped running.
 
 Real failures needing repair are queued as **explicit input for `heal-automated-tests`** — a list,
 **one line each: `<file>:<line>` + one-line error summary.** Capture into that handoff, at run
@@ -165,6 +190,8 @@ Stamped, non-negotiable:
   stay on disk, and only `summary.json` enters context by default.
 - **Execution** — one native runner process, no per-test browser driving, log streaming, or
   controller-side classification while Playwright is still running.
+- **Coverage** — a spec whose case still exists runs. Its case's `automation` status decides only
+  how the result is recorded, never whether the spec executes.
 - **Isolation** — every failure rerun once in isolation **before** it is classified.
 - **Honesty** — flake is reported as flake and **never recorded as a failed result**; the run
   records only what actually happened.
