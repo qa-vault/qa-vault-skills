@@ -35,7 +35,7 @@ QA Vault is the source of truth, but cases are **reviewed and approved by the en
 7. **Transfer.** On approval, write to QA Vault: `create_test_case` for one, `bulk_create_test_cases` for many (max 100 per call). Create the suites/sub-suites (`create_test_suite`) to match the agreed structure. **If a write comes back with `embedding_failed`, those cases are saved but not yet findable by semantic search** — every other field is correct, but they will not turn up in a dedupe search, including your own next one. Run `backfill_embeddings` for the project until it reports nothing remaining, and say so in the report rather than treating the write as fully done.
 8. **Report, then clean up on confirmation.** Report the created `case_id`s and where they landed. The drafts have served their purpose once everything is in the vault — but **deleting them is destructive, so ask the engineer first and only remove the draft files on explicit confirmation** (they may want to keep or re-check them). Never auto-delete.
 
-Single create, bulk create, and a simple single edit (`update_test_case`) are all valid — pick what fits.
+Single create, bulk create, and a simple single edit (`update_test_case`) are all valid — pick what fits. An edit answers `embedding_stale` when its re-embed failed: the case is saved, but semantic search still matches it on its **previous** wording. Treat it exactly like `embedding_failed` above — run `backfill_embeddings` and report it.
 
 ## Validation: flag suspicious behavior
 

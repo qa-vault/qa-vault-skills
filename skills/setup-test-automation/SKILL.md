@@ -7,7 +7,7 @@ description: Use when preparing a repository for AI-driven Playwright e2e automa
 
 ## Overview
 
-A **one-time bootstrap** that takes any web-app repo to agent-ready Playwright state. The output *is the contract*: the files every other qa-vault automation skill (`automate-test-cases`, `heal-automated-tests`, `run-automated-tests`) reads before it runs. Everything project-specific lives in those generated files — **this skill itself stays universal**; nothing about your app is hard-coded here.
+A **one-time bootstrap** that takes any web-app repo to agent-ready Playwright state. The output *is the contract*: the files every other qa-vault automation skill (`automate-test-cases`, `heal-automated-tests`, `run-automated-tests`, `reconcile-test-suite`) reads before it runs. Everything project-specific lives in those generated files — **this skill itself stays universal**; nothing about your app is hard-coded here.
 
 Run it **once per repository**. The other skills refuse to run without the contract and point back here.
 

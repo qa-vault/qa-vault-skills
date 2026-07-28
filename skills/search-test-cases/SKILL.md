@@ -18,14 +18,14 @@ Use the QA Vault MCP tools listed below. If another test-management MCP is also 
 | Tool | What it does | Reach for it when |
 |------|--------------|-------------------|
 | `search_test_cases(project, query)` | Case-insensitive **substring** match on the case **title**; returns a page plus `total_count` | You know roughly what the case is called; a fast literal check |
-| `list_test_cases(project, …filters)` | Structured **listing/filtering** by `suite_id` / `tags` / `priority` / `status` / `layer` (+ `search`, `fields`, `include`, `limit`/`offset`) | You want a **complete** scoped set — the only mode that enumerates exhaustively (paginate past the limit) |
+| `list_test_cases(project, …filters)` | Structured **listing/filtering** by `suite_id` / `tags` / `priority` / `status` / `layer` / `automation` (+ `search`, `fields`, `include`, `limit`/`offset`) | You want a **complete** scoped set — the only mode that enumerates exhaustively (paginate past the limit) |
 | `smart_search_cases(project, query, …filters)` | **Semantic** vector search — the server selects what is relevant and labels each hit `relevance: strong` or `related` | You're searching by **meaning/concept**, where the title may not share keywords |
 | `find_related_cases(case_id)` | **"More like this"** from one existing case, under the same relevance selection | You have a seed case and want its overlap/neighbors |
 | `suggest_cases_for_defect(project, defect_title, …)` | Semantic search **from a defect** rather than a query, same relevance selection | You have a bug and want the cases covering the area it landed in |
 
 For valid filter values (priority, layer, status, …), call `get_field_options` — don't guess them.
 
-Both semantic tools accept an optional `threshold`, and it is **not** a routine parameter — there is no per-call default to tune. Relevance selection is calibrated inside the server, per mode; `threshold` only overrides the absolute floor that decides whether anything is relevant at all. Use it in exactly one situation: a search came back empty and you want to widen it deliberately — pass a *lower* value. Never raise it hoping for better matches.
+All three semantic modes accept an optional `threshold`, and it is **not** a routine parameter — there is no per-call default to tune. Relevance selection is calibrated inside the server, per mode; `threshold` only overrides the absolute floor that decides whether anything is relevant at all. Use it in exactly one situation: a search came back empty and you want to widen it deliberately — pass a *lower* value. Never raise it hoping for better matches.
 
 `limit` is the same kind of parameter: **omit it.** The semantic modes set no default — the server returns everything its selection accepted, which is already bounded — so a `limit` can only ever hide matches the server judged relevant. Pass one only when you deliberately want a short list, and read the `total_matched` the response then carries. The listing modes are different: `list_test_cases` and the title search return a *page* plus the true `total_count`, and you page with `offset`. There, a returned page smaller than the total is normal; leaving it unread is not.
 

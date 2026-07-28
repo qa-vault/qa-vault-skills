@@ -1,6 +1,6 @@
 ---
 name: heal-automated-tests
-description: Use when Playwright specs generated from QA Vault cases are failing — "fix the failing e2e tests", "the suite is red", "heal these specs", or when run-automated-tests hands over failures. Triages each failure into test defect, data-isolation defect, intent change, or product bug; fixes only what belongs to the test; escalates the rest (case updates via maintain-test-cases, defects into QA Vault plus the project's tracker).
+description: Use when Playwright specs generated from QA Vault cases are failing — "fix the failing e2e tests", "the suite is red", "heal these specs", or when run-automated-tests hands over failures. Triages each failure into test defect, data-isolation defect, intent change, product bug, or product-fixed; fixes only what belongs to the test; escalates the rest (case updates via maintain-test-cases, defects into QA Vault plus the project's tracker).
 ---
 
 # Heal Automated Tests

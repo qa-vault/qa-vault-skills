@@ -15,7 +15,7 @@ The content skills (`create-test-cases`, `maintain-test-cases`) include a **vali
 
 - **`setup-test-automation`** — one-time per-repo bootstrap: scaffold Playwright + playwright-cli, the seed test and fixtures, and the per-project `AUTOMATION.md` / `APP-MAP.md` contract the other automation skills read. Runs first.
 - **`automate-test-cases`** — turn QA Vault manual cases into Playwright specs, verified against the live app with playwright-cli, linked both ways to their source cases, with automation status updated.
-- **`heal-automated-tests`** — triage failing specs into test defect, data-isolation defect, intent change, or product bug; fix only what belongs to the test and escalate the rest. Never weakens assertions to force green.
+- **`heal-automated-tests`** — triage failing specs into test defect, data-isolation defect, intent change, product bug, or product fixed; fix only what belongs to the test and escalate the rest. Never weakens assertions to force green.
 - **`run-automated-tests`** — execute the suite through an artifact-first native runner, parse a compact per-case summary, separate flake from real failure, record an `origin=automated` run and per-case results in QA Vault, and queue genuine failures for `heal-automated-tests`.
 - **`reconcile-test-suite`** — adopt a repository whose e2e specs predate the vault linkage: classify every unlinked spec against the vault, then link, retrofit, and consolidate per an engineer-approved map — authoring new cases only for true gaps.
 
@@ -42,7 +42,7 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
 - A **Playwright-testable web app** to drive
 - The **QA Vault MCP** connected
 
-`setup-test-automation` runs first — a one-time bootstrap per repository that installs the Playwright toolchain and writes the per-project contract files (`AUTOMATION.md`, `APP-MAP.md`) the other three automation skills read before they run.
+`setup-test-automation` runs first — a one-time bootstrap per repository that installs the Playwright toolchain and writes the per-project contract files (`AUTOMATION.md`, `APP-MAP.md`) the other automation skills read before they run.
 
 ---
 
