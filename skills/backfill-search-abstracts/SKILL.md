@@ -13,13 +13,13 @@ This skill closes that gap **in bulk** for a project. It writes exactly one fiel
 
 ## 1. Inventory the gap
 
-List the project's cases with the abstract included explicitly — it is not in the default field set:
+Ask the server for exactly the lacking cases — never page the whole project through your context to test a field's presence:
 
 ```
-list_test_cases(project, fields: ["id", "case_number", "title", "suite_id", "search_abstract"], limit, offset)
+list_test_cases(project, missing_abstract: true, fields: ["id", "case_number", "title", "suite_id"], limit, offset)
 ```
 
-Paginate to completeness, then split locally into *has* / *lacks* an abstract. Report the numbers ("118 of 215 cases lack an abstract, across N suites") and **confirm the scope with the engineer before writing anything**. The abstracts themselves are invisible infrastructure and are not reviewed per item — the scope, and a sample of the output (step 4), are what the engineer sees.
+The response's `total_count` is the gap size; paginate to collect every lacking case's number and suite. Report the numbers ("118 of 215 cases lack an abstract, across N suites") and **confirm the scope with the engineer before writing anything**. The abstracts themselves are invisible infrastructure and are not reviewed per item — the scope, and a sample of the output (step 4), are what the engineer sees.
 
 ## 2. Zone the work — whole suites, never fragments of one
 
@@ -54,7 +54,7 @@ Show the engineer a small sample (2–3 abstracts from different zones) with the
 
 ## 5. Apply and repair
 
-Apply per case with `update_test_case`, sending **only** `search_abstract`. The write is version-neutral (the case's `version` does not change) and the server embeds the new face immediately.
+**Each zone agent applies its own zone's writes** — per case with `update_test_case`, sending **only** `search_abstract` — and reports counts; the writes are then spread across the parallel agents instead of serialized through one session, which is what keeps a several-hundred-case project inside a reasonable wall-clock. The write is version-neutral (the case's `version` does not change) and the server embeds the new face immediately.
 
 If any write reports an embedding failure or staleness, run `backfill_embeddings` for the project until it reports nothing remaining — it repairs both faces (case text and abstract). Do not report the backfill as done while anything remains.
 
