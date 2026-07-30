@@ -39,7 +39,7 @@ Also asked as: <2-3 short alternative phrasings another QA might type when looki
 Technical terms: <3-6 industry terms for the concepts involved, e.g. "least-privilege enforcement", "anti-enumeration", "idempotency">
 ```
 
-Hard rules: every line specific to THIS case and distinguishing it from its zone siblings; no suite, folder, tag, or product names; no filler openers ("This test case…"); max 80 words per case.
+Hard rules: every line specific to THIS case and distinguishing it from its zone siblings; no references to suites, folders, tags, or the product as labels or locations — a domain word that happens to match a suite title ("authentication", "checkout") is normal vocabulary, not a violation; no filler openers ("This test case…"); max 80 words per case.
 
 ## 4. Check the batch before applying
 
