@@ -31,7 +31,7 @@ All three semantic modes accept an optional `threshold`, and it is **not** a rou
 
 ## Phrasing a semantic query
 
-Describe what the test does in a full phrase — semantic search matches meaning, so "user resets a forgotten password from the login screen" retrieves its target reliably. Very short queries (two to four words) retrieve their target only about half the time and may clear nothing at all — describe the behaviour rather than guessing keywords. For exact wording or an id, use `list_test_cases` with its `search` parameter instead.
+Describe what the test does in a full phrase — semantic search matches meaning, so "user resets a forgotten password from the login screen" retrieves its target reliably. Each case is indexed under two representations: its own text and a search abstract carrying plain-language, paraphrase, and technical registers — so an industry-term query ("anti-enumeration on the reset form", "least-privilege enforcement on write actions") is a legitimate phrasing in its own right, not something to translate into UI words first. Very short queries (two to four words) remain the weakest form — describe the behaviour rather than guessing keywords. When a semantic search comes back empty, rephrase in plain product language (what the user does and what they see) before reaching for `threshold`. For exact wording or an id, use `list_test_cases` with its `search` parameter instead.
 
 ## Choosing and combining
 
