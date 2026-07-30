@@ -66,6 +66,7 @@ Set **exactly** these:
 - **`priority`** — from business impact + regression risk + frequency.
 - **`behavior`** — `positive` / `negative` / `destructive`.
 - **`automation`** — always **`not_automated`** (these are manual cases; QA Vault has no "manual" value, `not_automated` is it). Change only if the engineer asks.
+- **`search_abstract`** — the case's hidden second face in semantic search: embedded into its own vector, never shown in the UI, not returned by default reads. Exactly three lines — `Verifies:` (one plain-language sentence: the user-visible behavior, as an end user would say it), `Also asked as:` (2–3 alternative phrasings another QA might type when looking for exactly this case), `Technical terms:` (3–6 industry terms for the concepts involved, e.g. "least-privilege enforcement", "anti-enumeration"). It must distinguish this case from its suite siblings — write it while the whole set is in front of you, never as a description of the shared feature area. No suite/tag/product names, no filler openers, max 80 words. On later edits, regenerate it whenever the change alters what the case verifies.
 - **`tags`** — see below.
 
 **Do not set `severity`, `type`, `layer`, or `postconditions`** unless the engineer explicitly asks. Setting them by default adds noise and false precision. For any enum value you're unsure of, call `get_field_options`.
@@ -95,6 +96,10 @@ Each case block in a `qa-vault/<suite>/<set>.md` file:
 - Steps:
   1. <action> → Expected: <everything the tester verifies through the UI>
   2. ...
+- Abstract:
+  Verifies: <one plain-language sentence>
+  Also asked as: <2-3 alternative phrasings>
+  Technical terms: <3-6 industry terms>
 - ⚠️ VALIDATE: <only when flagged — observed behavior + why it looks suspicious>
 ```
 
