@@ -34,9 +34,11 @@ or **the specs matching a QA Vault run template**. When the caller gives **no sc
 `// qa-vault: project=<code> case=<case_id>`, so a grep across `e2e/tests/` maps each spec to its
 case and each in-scope case to its spec, in both directions.
 
-**Version-drift check.** Fetch the in-scope cases' current versions in one `list_test_cases` call
+**Version-drift check.** Fetch the in-scope cases' current versions with `list_test_cases`
 (`fields: ["id", "version"]`, automation filter as relevant) and compare each against its spec's
-provenance-header `v<version>`. A spec whose header version lags the case's current version is
+provenance-header `v<version>`. It answers one **page** — default 50 — alongside the true
+`total_count`, so page with `offset` until you have them all; stopping at the first page silently
+marks every case past it as non-drifted. A spec whose header version lags the case's current version is
 reported as **STALE** — it still runs and records (it may still be valid), but the report lists it as
 a re-derivation candidate for `automate-test-cases`.
 
@@ -114,8 +116,9 @@ case flip was never made. It runs like any other spec, and §3 records it and re
 - Create the run **only after** `rerun_guard.triggered=false`, `run_errors` is empty, and every
   `review_required` item has been classified. This prevents a partial or mixed execution from
   becoming a misleading run.
-- **`bulk_record_results`** using the resolved entries from `summary.json.results`, plus any
-  engineer-reviewed isolation verdicts. There is one entry per in-scope case whose spec ran
+- **`bulk_record_results`** (max **200** results per call — split a larger run across calls, and
+  note that `create_test_run` caps `case_ids` at **500**) using the resolved entries from
+  `summary.json.results`, plus any engineer-reviewed isolation verdicts. There is one entry per in-scope case whose spec ran
   (passed / failed / expected-failure → blocked) or was Playwright-skipped — flake,
   unexpected-pass ("product fixed") and missing-spec cases stay excluded — each with `case_id`,
   `status`, `comment`:

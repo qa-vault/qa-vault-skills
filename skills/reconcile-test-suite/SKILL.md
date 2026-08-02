@@ -49,15 +49,22 @@ Nothing is edited, run, or written to the vault in this phase.
 2. **Verify the already-linked.** Every header must point at an existing case; automation status
    must be consistent (a `test.fail()` bug spec pairs with an un-flipped case); header versions
    lagging current case versions are drift *hints* to re-check, not proof of divergence.
-3. **Classify per `test()`, not per file** — multi-test files hide multi-case mappings. Compare
-   each test's actual actions/assertions against candidate cases' steps (fetch full cases; titles
-   are not enough). Verdicts:
+3. **Classify per `test()`, not per file** — multi-test files hide multi-case mappings. Find each
+   test's candidate cases by **searching, not by scanning the slice's titles**: describe what the
+   test actually does as a full phrase to `smart_search_cases`, and sweep the obvious terms through
+   the title search as a backstop (see the `search-test-cases` modes). Titles are the weakest signal
+   here — a dev-era spec rarely shares wording with the case it implements, which is exactly the
+   gap semantic search closes. Then compare each test's actual actions/assertions against those
+   candidates' steps (fetch full cases; titles are not enough). Verdicts:
    - **DUPLICATE** — the scenario is already proven by a linked spec → deletion candidate;
    - **MATCH** — a case exists and the spec implements its full scenario → link + contract retrofit;
    - **PARTIAL** — a case exists but the spec skips steps the case requires (Cancel/Escape paths,
      persistence-after-reload, negative states are the classic omissions) or diverges from its
      preconditions → retrofit with the missing steps, or re-derive if the divergence is structural;
-   - **NO-CASE** — no vault counterpart → gap, queued for case authoring.
+   - **NO-CASE** — no vault counterpart → gap, queued for case authoring. This is the verdict that
+     writes to the vault, so earn it: an empty semantic result means nothing cleared the relevance
+     floor, **not** that no such case exists. Rephrase once with more of the scenario before
+     concluding, or you will author a duplicate of a case that was already there.
 4. **Report unmatched BOTH ways.** For each zone: specs that matched no case AND slice cases that
    matched no spec. The two-way report is what exposes split and collapsed cases — a one-way scan
    reads a half-covered case as "covered".
