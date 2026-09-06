@@ -15,6 +15,10 @@ qa-vault-skills/
 │   │   └── references/scenario-examples.md
 │   ├── maintain-test-cases/SKILL.md
 │   ├── organize-test-repository/SKILL.md
+│   ├── backfill-search-abstracts/SKILL.md
+│   ├── apply-lessons-learned/
+│   │   ├── SKILL.md
+│   │   └── references/report-format.md
 │   ├── reconcile-test-suite/SKILL.md
 │   ├── setup-test-automation/
 │   │   ├── SKILL.md
@@ -44,7 +48,7 @@ The `skills/` directory is the **single source of truth** for skill content. Bot
 
 ## Skills overview
 
-Nine self-contained skills, auto-discovered from `skills/`, in two families — **manual QA practice** (the QA Vault content lifecycle) and the **e2e automation harness** (Playwright generation, healing, and reporting). Each embeds its operating-discipline rules inline (there is no shared conventions skill).
+Eleven self-contained skills, auto-discovered from `skills/`, in two families — **manual QA practice** (the QA Vault content lifecycle) and the **e2e automation harness** (Playwright generation, healing, and reporting). Each embeds its operating-discipline rules inline (there is no shared conventions skill).
 
 **Manual QA practice:**
 
@@ -52,6 +56,8 @@ Nine self-contained skills, auto-discovered from `skills/`, in two families — 
 - **`create-test-cases`** — author manual **UI end-to-end scenarios** (one scenario = one case with many steps). Stages work as a `qa-vault/` Markdown draft for human review/approval, then transfers to the vault and deletes the draft. Sets a fixed required-field set (incl. `automation: not_automated` and high-level, reuse-first tags); other metadata only on request. A validation phase flags implemented-but-suspicious behavior (`⚠️ VALIDATE`, draft-only) and blocks transfer until the engineer resolves each flag.
 - **`maintain-test-cases`** — change-driven sync. Explores a development change, finds affected/outdated cases, and produces one reviewed changeset (update / author net-new / delete obsolete) staged in the shared case-block format with `[UPDATE/NEW/REMOVE]` prefixes. A validation phase flags implemented-but-suspicious changes (`⚠️ VALIDATE`, draft-only — e.g. a change contradicting a previously approved expected result) and blocks apply until each flag is resolved. Preserves an existing case's `automation` status; never overwrites it silently.
 - **`organize-test-repository`** — structural housekeeping (suites, tags, case order) in reactive and proactive-audit modes. Previews plans in chat (no draft files); flags duplicate cases for per-pair decision rather than auto-resolving.
+- **`backfill-search-abstracts`** — repairs semantic search for a project whose cases lack a `search_abstract`: inventories the gap, works in whole-suite zones, writes sibling-distinguishing abstracts, applies them via MCP, and re-embeds. Writes only the `search_abstract` field.
+- **`apply-lessons-learned`** — carries a project's recorded Lessons Learned (`get_project_lessons`) onto other modules. Gates every run on an engineer-confirmed lessons × modules scope, profiles each lesson's class of failure, scans docs and code per cell, checks vault coverage, and reports coverage gaps plus suspected bugs in product terms. Investigation only: cases go through `create-test-cases` on approval, defects through the shared defect-propagation reference only on an explicit request.
 
 **E2e automation harness:**
 
@@ -86,4 +92,4 @@ Both ecosystems pull this plugin from the `qa-vault/marketplace` catalog repo:
 - **Claude Code** marketplace entry uses `source: "github"` with `repo: "qa-vault/qa-vault-skills"`.
 - **Codex CLI** discovers skills from `skills/` via the `.codex-plugin/plugin.json` manifest.
 
-When adding or changing skills, keep `skills/` as the single source of truth, keep both manifests' metadata in sync, and keep the nine one-line summaries above accurate. See `README.md` for the user-facing description.
+When adding or changing skills, keep `skills/` as the single source of truth, keep both manifests' metadata in sync, and keep the eleven one-line summaries above accurate. See `README.md` for the user-facing description.

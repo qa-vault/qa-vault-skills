@@ -1,7 +1,7 @@
 {
   "name": "qa-vault-skills",
-  "version": "0.6.0",
-  "description": "Skills that turn an AI agent into a QA practitioner for the QA Vault platform: author manual UI test scenarios, maintain them as the product changes, search the repository, and organize suites and tags \u2014 all through the QA Vault MCP with a human review-and-approve loop \u2014 and turn those manual cases into automated Playwright e2e tests: generate, heal, run, and report, closed-loop through the same MCP.",
+  "version": "0.7.0",
+  "description": "Skills that turn an AI agent into a QA practitioner for the QA Vault platform: author manual UI test scenarios, maintain them as the product changes, search the repository, organize suites and tags, keep the search abstracts behind semantic search current, and apply recorded lessons learned to find coverage gaps and suspected bugs — all through the QA Vault MCP with a human review-and-approve loop — and turn those manual cases into automated Playwright e2e tests: generate, heal, run, and report, closed-loop through the same MCP.",
   "skills": "./skills/",
   "author": {
     "name": "Andrii",
@@ -18,6 +18,8 @@
     "manual-testing",
     "playwright",
     "e2e",
-    "test-automation"
+    "test-automation",
+    "lessons-learned",
+    "coverage-gaps"
   ]
 }
