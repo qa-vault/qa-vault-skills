@@ -1,6 +1,6 @@
 # qa-vault-skills
 
-Nine skills that make an AI agent a competent **QA practitioner** for the **QA Vault** platform — an MCP-native test-management product. They form two families. The **manual QA practice** family lets a QA engineer author, maintain, search, and organize manual UI test cases through their AI agent, with a human review-and-approve loop and QA Vault as the single source of truth. The **e2e automation harness** family turns those manual cases into automated Playwright tests — generate, heal, run, and report — closed-loop through the same QA Vault MCP.
+Eleven skills that make an AI agent a competent **QA practitioner** for the **QA Vault** platform — an MCP-native test-management product. They form two families. The **manual QA practice** family lets a QA engineer author, maintain, search, and organize manual UI test cases through their AI agent, with a human review-and-approve loop and QA Vault as the single source of truth. The **e2e automation harness** family turns those manual cases into automated Playwright tests — generate, heal, run, and report — closed-loop through the same QA Vault MCP.
 
 The content skills (`create-test-cases`, `maintain-test-cases`) include a **validation phase**: while grounding cases in the real implementation, the agent flags implemented-but-suspicious behavior — possible bugs in product logic or UX — with a `⚠️ VALIDATE` note in the draft, and nothing is written to the vault until the engineer explicitly resolves every flag. Test authoring often happens before anyone manually explores the shipped feature, so these flags catch potential bugs at the cheapest moment.
 
@@ -10,6 +10,8 @@ The content skills (`create-test-cases`, `maintain-test-cases`) include a **vali
 - **`create-test-cases`** — author manual UI end-to-end scenarios from a spec, ticket, code, or conversation. Drafts for review — flagging suspicious implemented behavior (possible bugs) for the engineer to resolve — then writes to the vault.
 - **`maintain-test-cases`** — keep the repository in sync after development changes: update stale cases, add new coverage, remove what's obsolete — in one reviewed changeset, flagging suspicious changed behavior (possible regressions) for the engineer to resolve.
 - **`organize-test-repository`** — restructure and clean up suites, tags, and case order; audit for sprawl and duplicates.
+- **`backfill-search-abstracts`** — fill in missing search abstracts so semantic search finds every case under different phrasings; writes only that field.
+- **`apply-lessons-learned`** — take the project's recorded incidents and their takeaways and find where else the same class of failure can recur: coverage gaps to author and suspected live bugs to confirm. Reports and briefs only — nothing is filed without your say-so.
 
 **E2E automation harness:**
 
@@ -75,7 +77,7 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
    - **Project** — only active in this project, shared with teammates via `.claude/settings.json`
    - **Local** — only for you, only in this project
 
-3. **Verify** — type `/` and you should see `search-test-cases`, `create-test-cases`, `maintain-test-cases`, `organize-test-repository`, `setup-test-automation`, `automate-test-cases`, `heal-automated-tests`, `run-automated-tests`, and `reconcile-test-suite` (each annotated `(qa-vault-skills)`).
+3. **Verify** — type `/` and you should see `search-test-cases`, `create-test-cases`, `maintain-test-cases`, `organize-test-repository`, `backfill-search-abstracts`, `apply-lessons-learned`, `setup-test-automation`, `automate-test-cases`, `heal-automated-tests`, `run-automated-tests`, and `reconcile-test-suite` (each annotated `(qa-vault-skills)`).
 
 **Updates:** Claude Code auto-updates installed plugins at startup.
 
@@ -103,7 +105,7 @@ Codex has its own plugin marketplace system; the flow mirrors Claude Code's and 
 
    Find `qa-vault-skills` under the `qa-vault` marketplace and toggle it on to install. (`/plugins` is an interactive browser — it does not accept inline arguments.)
 
-3. **Verify** — type `$` in the Codex composer to open the skill-mention popup; `search-test-cases`, `create-test-cases`, `maintain-test-cases`, `organize-test-repository`, `setup-test-automation`, `automate-test-cases`, `heal-automated-tests`, `run-automated-tests`, and `reconcile-test-suite` should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's `description`.
+3. **Verify** — type `$` in the Codex composer to open the skill-mention popup; `search-test-cases`, `create-test-cases`, `maintain-test-cases`, `organize-test-repository`, `backfill-search-abstracts`, `apply-lessons-learned`, `setup-test-automation`, `automate-test-cases`, `heal-automated-tests`, `run-automated-tests`, and `reconcile-test-suite` should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's `description`.
 
 **Updates:** refresh with `codex plugin marketplace upgrade qa-vault` periodically.
 
@@ -119,6 +121,8 @@ Codex has its own plugin marketplace system; the flow mirrors Claude Code's and 
 | `create-test-cases` | You're authoring new manual UI test scenarios. | Via review draft + flag resolution → vault |
 | `maintain-test-cases` | Development changed and the tests need to catch up. | Via review draft + flag resolution → vault |
 | `organize-test-repository` | You're restructuring or cleaning up suites/tags/cases. | After chat-preview confirm |
+| `backfill-search-abstracts` | Cases are missing search abstracts and semantic search misses them. | `search_abstract` only, after a checked batch |
+| `apply-lessons-learned` | You want past incidents applied to other modules: what to test, what is probably broken. | No — reports and briefs; cases and defects only through the other skills on your request |
 | `setup-test-automation` | You're preparing a repo for AI-driven Playwright automation (one-time bootstrap). | Scaffolds Playwright + contract files into the repo |
 | `automate-test-cases` | You're turning manual cases into verified Playwright e2e specs. | Specs to the repo; links + automation status to the vault |
 | `heal-automated-tests` | Generated specs are failing and need triage + repair. | Spec fixes to the repo; defects/escalations out |
