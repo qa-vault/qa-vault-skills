@@ -62,7 +62,7 @@ Nothing was written.
 ```
 
 The last line is literal. If a row later becomes a write at the engineer's request, the follow-up
-message reports the id and location of what was created.
+message reports what was created by title and location (a case as `#number "title"` in its suite).
 
 ## Filled example (abridged)
 

@@ -233,5 +233,5 @@ Stamped, non-negotiable:
   traffic never reaches the dispatching session: on Claude Code, the plugin's `e2e-author`
   companion agent; on Codex CLI, spawn the built-in `worker` with the batch and this skill as
   its instruction set. Either way the sub-agent returns the changeset summary only — specs
-  created/updated with case ids, write-backs, APP-MAP facts, escalations with verbatim
+  created/updated with the cases they cover as `#number "title"`, write-backs, APP-MAP facts, escalations with verbatim
   evidence; never raw snapshots or full test output.

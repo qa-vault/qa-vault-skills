@@ -2,7 +2,7 @@
 
 **Turn your AI agent into a QA practitioner for QA Vault: author, maintain, search, and organize manual test cases, then automate them with Playwright, all through the QA Vault MCP with you approving every write.**
 
-[![Version](https://img.shields.io/badge/version-0.7.1-blue)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.8.0-blue)](.claude-plugin/plugin.json)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-cc785c)](#install)
 [![Codex CLI](https://img.shields.io/badge/Codex_CLI-plugin-1f2328)](#install)
