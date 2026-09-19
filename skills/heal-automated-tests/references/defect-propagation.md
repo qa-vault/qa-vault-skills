@@ -101,7 +101,7 @@ Environment: <app URL / build or commit / browser + viewport / test-data prefix>
 
 References:
 - Spec:  <repo-relative spec path>:<line>
-- Case:  <project code> / <case_id> (v<version>)
-- Run:   <QA Vault run id> / result <result id>   (when filed from a recorded run)
+- Case:  <project code>-<case number> "<title>" (v<version>)
+- Run:   "<run title>" (run <id>) / result <result id>   (when filed from a recorded run)
 - Trace: <playwright trace or report pointer>
 ```

@@ -154,7 +154,7 @@ parallel-worker collisions at write time rather than discovering them through fa
   explicitly.
 - **Append** every session discovery to APP-MAP; a fact that contradicts an existing entry replaces
   it.
-- **Report the changeset:** specs created, cases updated, cases declined + why.
+- **Report the changeset:** specs created, cases updated and cases declined + why — each case as `#number "title"`.
 - **Stale schema** — if the QA Vault MCP **rejects or silently drops a documented parameter**, its
   cached tool schemas likely predate a server deploy; **reconnect the MCP server**, don't work around it.
 

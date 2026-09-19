@@ -54,7 +54,7 @@ traffic stays in this context and NEVER reaches the dispatching session. Reply w
 changeset summary ONLY:
 
 - specs created, each with its repo-relative path;
-- cases updated (id → new automation status + automation_ref);
+- cases updated (`#number "title"` → new automation status + automation_ref);
 - cases declined, each with its reason;
 - APP-MAP additions (the sections/facts you appended).
 

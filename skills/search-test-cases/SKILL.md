@@ -42,7 +42,7 @@ Describe what the test does in a full phrase — semantic search matches meaning
 
 ## Presenting results
 
-Inline, ranked: case id (number) + title + suite + the `relevance` tier the server returned. Say which searches you ran, so the engineer sees the lookup was thorough rather than one lucky keyword. Don't print raw similarity numbers — the server has already turned the score into a tier, and a cosine value reads like a percentage it isn't. Save results to a file only if asked.
+Inline, ranked: case number (`#number`, with the project code) + title + suite + the `relevance` tier the server returned — the surrogate `id` is for tool calls, not for the list. Say which searches you ran, so the engineer sees the lookup was thorough rather than one lucky keyword. Don't print raw similarity numbers — the server has already turned the score into a tier, and a cosine value reads like a percentage it isn't. Save results to a file only if asked.
 
 **Never let a partial list read as the whole answer.** Any response carrying `truncated` also carries the real total (`total_matched` for the semantic modes, `total_count` for the listing ones): say how many of how many you are showing, then either fetch the rest — drop the `limit` you set, or page with `offset` — or state why the top slice is enough. A page that came back full is not evidence there is nothing after it; the total is.
 

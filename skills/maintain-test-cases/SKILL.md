@@ -33,7 +33,7 @@ Like `create-test-cases`, you do **not** write to the vault until the engineer a
 Every case block reads **identically to a `create-test-cases` draft block** — the changeset semantics live only in the bracket prefix of the heading and one extra bullet (`Change:` / `Reason:`). Show each case's **final state**, not old→new per-field diffs.
 
 ```
-### [UPDATE <case_id>] <Title>
+### [UPDATE #<case number>] <Title>
 - Change: <what changed in the product and what is edited here — and why>
 - Priority: <low|medium|high>
 - Behavior: <positive|negative|destructive>
@@ -52,7 +52,7 @@ Every case block reads **identically to a `create-test-cases` draft block** — 
   1. <action> → Expected: <everything the tester verifies through the UI>
   2. ...
 
-### [REMOVE <case_id>] <Title>
+### [REMOVE #<case number>] <Title>
 - Reason: <why obsolete — e.g. the feature it tested is gone>
 - Action: delete | deprecate (deprecate only when the engineer wants history kept)
 ```
