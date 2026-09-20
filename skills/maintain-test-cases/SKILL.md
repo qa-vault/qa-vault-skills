@@ -20,7 +20,7 @@ Like `create-test-cases`, you do **not** write to the vault until the engineer a
 3. **Stage the changeset in `qa-vault/`.** Write the proposed changes as a Markdown draft (same `qa-vault/` folder = suite, file = set layout as `create-test-cases`), using the *Changeset draft format* below — per case what changes: edited steps, new cases, removals — and why.
 4. **Validation sweep.** Before presenting the changeset, re-read it against what the change actually does: attach a `⚠️ VALIDATE` line (format below) to entries whose implemented behavior you noted as suspicious, and check across entries for inconsistencies (e.g., two screens now handling the same situation differently). See *Validation: flag suspicious behavior*.
 5. **Review & approve.** Present the changeset, surface anything ambiguous (is this case really affected? is it in scope?), and iterate until the engineer approves. Alongside it, present a **validation summary** in chat: each flagged entry (title, draft file, one-line suspicion), plus a short *General observations* list for suspicious things you saw that didn't map to any entry. **Do not apply while any flag is unresolved** — for each flag the engineer explicitly decides: valid as-is / modify the entry / drop the entry / it's a real bug (they handle filing and choose whether the case then encodes the intended behavior or is dropped). A blanket "changeset approved" does **not** resolve flags: get a per-flag decision, or an explicit "all flags approved as valid", before any write.
-6. **Apply, then report; clean up on confirmation.** Make the approved changes and report the changeset (ids updated / created / deleted). If a write comes back with `embedding_failed` (a new case that is saved but not yet searchable) or `embedding_stale` (an edited case whose vector still matches its **old** wording), run `backfill_embeddings` for the project until nothing remains and note it — otherwise the next search silently works from text you already replaced. Deleting the draft is destructive — **ask before removing it and only delete on explicit confirmation**; never auto-delete.
+6. **Apply, then report; clean up on confirmation.** Make the approved changes and report the changeset by title — each case as `#number "title"` under updated / created / deleted; the write responses carry number and title, so no re-read is needed. If a write comes back with `embedding_failed` (a new case that is saved but not yet searchable) or `embedding_stale` (an edited case whose vector still matches its **old** wording), run `backfill_embeddings` for the project until nothing remains and note it — otherwise the next search silently works from text you already replaced. Deleting the draft is destructive — **ask before removing it and only delete on explicit confirmation**; never auto-delete.
 
 ## The changeset has three kinds of action
 
@@ -33,7 +33,7 @@ Like `create-test-cases`, you do **not** write to the vault until the engineer a
 Every case block reads **identically to a `create-test-cases` draft block** — the changeset semantics live only in the bracket prefix of the heading and one extra bullet (`Change:` / `Reason:`). Show each case's **final state**, not old→new per-field diffs.
 
 ```
-### [UPDATE <case_id>] <Title>
+### [UPDATE #<case number>] <Title>
 - Change: <what changed in the product and what is edited here — and why>
 - Priority: <low|medium|high>
 - Behavior: <positive|negative|destructive>
@@ -52,7 +52,7 @@ Every case block reads **identically to a `create-test-cases` draft block** — 
   1. <action> → Expected: <everything the tester verifies through the UI>
   2. ...
 
-### [REMOVE <case_id>] <Title>
+### [REMOVE #<case number>] <Title>
 - Reason: <why obsolete — e.g. the feature it tested is gone>
 - Action: delete | deprecate (deprecate only when the engineer wants history kept)
 ```
@@ -74,4 +74,4 @@ A case's `automation` value (`not_automated` / `to_be_automated` / `automated`) 
 
 ## Discipline
 
-Search broadly before deciding; read before editing; stage the whole changeset for review before any write; surface scope ambiguity instead of guessing; report the full changeset (updated / new / deleted).
+Search broadly before deciding; read before editing; stage the whole changeset for review before any write; surface scope ambiguity instead of guessing; report the full changeset (updated / new / deleted) by case number and title, never by id alone.

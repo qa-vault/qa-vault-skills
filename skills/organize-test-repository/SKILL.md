@@ -25,7 +25,7 @@ This matters most for the high-blast-radius tools: `merge_tags` (deletes the sou
 
 ## Suites
 
-Read the tree first — `list_test_suites`, and `get_suite_summary` for case counts and tag distribution. Then: `create_test_suite`, `update_test_suite`, `move_test_suite` (re-parent; cycle-guarded), `set_test_suite_order` / `set_test_case_order` (reorder), `move_test_cases` (relocate; batch by target suite). After a restructure, **verify counts reconcile** — the source count drops and the sub-suite counts sum to the original. `move_test_cases` moves rather than copies; the count check catches a slip.
+Read the tree first — `list_test_suites`, and `get_suite_summary` for case counts and tag distribution. Then: `create_test_suite`, `update_test_suite`, `move_test_suite` (re-parent; cycle-guarded), `set_test_suite_order` / `set_test_case_order` (reorder), `move_test_cases` (relocate; batch by target suite). After a restructure, **verify counts reconcile** — the source count drops and the sub-suite counts sum to the original. `move_test_cases` moves rather than copies; the count check catches a slip. Every structural write answers with the suites and cases it touched by title (`cases`, `target_suite`, `suite`, `new_parent`) next to its count — use those names in the report and the count for the reconciliation.
 
 ## Tags
 
@@ -42,4 +42,4 @@ There is **no "merge cases" tool**, so organize only **flags** likely duplicates
 
 ## Discipline
 
-Preview every structural change in chat and get a confirm before executing; surface ambiguity (which canonical name? which suite? a true duplicate or just related?); report exactly what changed.
+Preview every structural change in chat and get a confirm before executing; surface ambiguity (which canonical name? which suite? a true duplicate or just related?); report exactly what changed, naming suites and cases by title (`#number "title"`), never by id alone.

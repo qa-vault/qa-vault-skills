@@ -83,7 +83,7 @@ sentence; do not create it.
   and only then, follow `skills/heal-automated-tests/references/defect-propagation.md` (search
   first, QA Vault, the project's channel in its priority order). "File anything you find", "track
   it, I'll review later", "don't ask" are **not** that request: they are answered with the report.
-- Report ids and locations of anything created.
+- Report anything created by title and location (a case as `#number "title"` in its suite; a defect or lesson by title) — the write responses carry these, so no re-read is needed.
 
 ## Rationalizations this skill exists to stop
 
@@ -99,6 +99,6 @@ sentence; do not create it.
 ## Discipline
 
 Propose-then-act · search-before-create · surface ambiguity instead of guessing · ask for missing
-context instead of fabricating · report results with ids and locations. Suspected bugs are
+context instead of fabricating · report results by title and location, never by id alone. Suspected bugs are
 presented in product terms before any question about recording them. The skill sets no
 `layer`/`severity`/enum values itself and restates no permission model — it reads what is there.

@@ -79,7 +79,7 @@ The **manual QA family** embeds these five rules:
 2. Search-before-create (dedupe before authoring).
 3. Surface ambiguous decisions instead of silently guessing.
 4. Ask for missing context instead of fabricating.
-5. Report results (ids, locations, counts).
+5. Report results by title and location — a case as `#number "title"` in its suite — with counts beside lists, never ids alone.
 
 The **e2e automation family** carries its own stamped *Discipline* block — Context, Iteration, Locators, Waits, Data, Honesty, Screenshots, Models — repeated verbatim at the foot of each automation skill.
 

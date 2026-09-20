@@ -154,7 +154,7 @@ parallel-worker collisions at write time rather than discovering them through fa
   explicitly.
 - **Append** every session discovery to APP-MAP; a fact that contradicts an existing entry replaces
   it.
-- **Report the changeset:** specs created, cases updated, cases declined + why.
+- **Report the changeset:** specs created, cases updated and cases declined + why — each case as `#number "title"`.
 - **Stale schema** — if the QA Vault MCP **rejects or silently drops a documented parameter**, its
   cached tool schemas likely predate a server deploy; **reconnect the MCP server**, don't work around it.
 
@@ -233,5 +233,5 @@ Stamped, non-negotiable:
   traffic never reaches the dispatching session: on Claude Code, the plugin's `e2e-author`
   companion agent; on Codex CLI, spawn the built-in `worker` with the batch and this skill as
   its instruction set. Either way the sub-agent returns the changeset summary only — specs
-  created/updated with case ids, write-backs, APP-MAP facts, escalations with verbatim
+  created/updated with the cases they cover as `#number "title"`, write-backs, APP-MAP facts, escalations with verbatim
   evidence; never raw snapshots or full test output.
