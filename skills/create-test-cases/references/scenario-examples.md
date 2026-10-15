@@ -11,7 +11,7 @@ Rules visible throughout:
 
 ## 1. Fields as a case item carries them
 
-This is the content of one `create_case` payload, laid out for reading. `automation: not_automated` applies to all and is not repeated.
+Three cases of one set, laid out for reading the way a `create_case` payload carries them; the `description` and the three-line `search_abstract` every payload also needs are left out here for brevity. `automation: not_automated` applies to all and is not repeated.
 
 ```
 ### Pay with a valid card and reach order confirmation
@@ -43,7 +43,7 @@ This is the content of one `create_case` payload, laid out for reading. `automat
   2. Attempt to proceed to checkout → Expected: Checkout is blocked/disabled with a message prompting the user to add items.
 ```
 
-Maps onto QA Vault fields: the `###` heading → `title`; `Priority`/`Behavior`/`Tags`/`Preconditions` → the same fields; each numbered line → a `step` with `action` (before `→ Expected:`) and `expected_result` (after). `description` is a short sentence you add when transferring if the title alone isn't self-explanatory.
+Maps onto QA Vault fields: the `###` heading → `title`; `Priority`/`Behavior`/`Tags`/`Preconditions` → the same fields; each numbered line → a `step` with `action` (before `→ Expected:`) and `expected_result` (after). `description` is the one- or two-sentence field every case carries.
 
 ---
 

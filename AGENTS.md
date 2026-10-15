@@ -80,7 +80,7 @@ The **manual QA family** embeds these five rules:
 3. Surface ambiguous decisions instead of silently guessing.
 4. Ask for missing context instead of fabricating.
 5. Report results by title and location — a case as `#number "title"` in its suite — with counts beside lists, never ids alone.
-6. Decisions stay with the engineer: approving, applying or discarding a changeset over MCP happens only on their explicit word in the conversation.
+6. Decisions stay with the engineer: approving, resolving flags, applying or discarding a changeset over MCP happens only on their explicit word in the conversation.
 
 The **e2e automation family** carries its own stamped *Discipline* block — Context, Iteration, Locators, Waits, Data, Honesty, Screenshots, Models — repeated verbatim at the foot of each automation skill.
 
