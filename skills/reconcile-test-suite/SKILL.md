@@ -98,7 +98,7 @@ approves it.
    replacement passes twice.**
 4. **Gap authoring** — draft the missing cases from the specs + the live product (via
    `create-test-cases` conventions, including validation flags for implemented-but-suspicious
-   behavior), submit drafts for engineer review, transfer approved cases to the vault, then link
+   behavior), stage them as a changeset the engineer reviews and applies in QA Vault, then link
    and retrofit the gap specs like any others.
 5. **Final gate** — full-suite run; triage failures per `run-automated-tests` discipline (isolated
    rerun before classifying; remember `test.fail()` does not absorb timeouts).

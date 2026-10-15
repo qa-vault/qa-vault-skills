@@ -16,7 +16,7 @@ Structural housekeeping over existing QA Vault content — suites, tags, and cas
 
 ## Preview in chat, then execute — for every structural write
 
-Structural operations do **not** use the `qa-vault/` draft lifecycle (there is no case content to edit). Instead, **preview the plan in chat and get a confirm before executing — for every consequential write, including ones that look obvious.** Show what changes, the affected set, and the blast radius. Examples:
+Structural operations do **not** go through a changeset (there is no case content to review). Instead, **preview the plan in chat and get a confirm before executing — for every consequential write, including ones that look obvious.** Show what changes, the affected set, and the blast radius. Examples:
 
 - "Merge `Login`, `log-in` → `login`: re-tags ~N cases, deletes 2 tags."
 - "Create sub-suites Cart/Shipping/Payment/Confirmation under Checkout and move these 12 / 9 / 14 / 5 case ids."
