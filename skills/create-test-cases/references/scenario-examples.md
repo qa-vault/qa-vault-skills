@@ -1,6 +1,6 @@
 # Scenario examples
 
-Reference material for `create-test-cases`. These show what a good manual UI scenario looks like — the naming, the comprehensive UI-verifiable expected results, and the coverage spread. The **first** example is in the QA Vault draft form (the format you write into `qa-vault/`); the rest are prose illustrating expected-result richness across project types.
+Reference material for `create-test-cases`. These show what a good manual UI scenario looks like — the naming, the comprehensive UI-verifiable expected results, and the coverage spread. The **first** example is written out field by field the way a `create_case` item carries it; the rest are prose illustrating expected-result richness across project types.
 
 Rules visible throughout:
 - **Titles describe the scenario only** — `[Context] + [Action] + [Outcome]`, with **no suite/module-name prefix** (the suite + tags already supply module context).
@@ -9,9 +9,9 @@ Rules visible throughout:
 
 ---
 
-## 1. QA Vault draft form (the target)
+## 1. Fields as a case item carries them
 
-This is exactly how cases look in a `qa-vault/<suite>/<set>.md` draft. Folder = suite (e.g. `qa-vault/Checkout/`), file = a set (e.g. `payment.md`). `automation: not_automated` applies to all and is not repeated per block.
+This is the content of one `create_case` payload, laid out for reading. `automation: not_automated` applies to all and is not repeated.
 
 ```
 ### Pay with a valid card and reach order confirmation
