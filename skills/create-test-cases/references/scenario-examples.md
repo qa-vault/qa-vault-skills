@@ -4,7 +4,7 @@ Reference material for `create-test-cases`. These show what a good manual UI sce
 
 Rules visible throughout:
 - **Titles describe the scenario only** — `[Context] + [Action] + [Outcome]`, with **no suite/module-name prefix** (the suite + tags already supply module context).
-- **Only UI-verifiable detail** in expected results — no endpoints, status codes, table names, or logs.
+- **Only UI-verifiable outcomes** in expected results — what the person can read, do or no longer do; no endpoints, status codes, table names, or logs, and no presentation (colour, icons, animation, sizes) that a redesign could change without changing the behaviour.
 - **Preconditions only when non-obvious.**
 
 ---
@@ -65,7 +65,7 @@ Steps (abridged — note how each expected result captures everything visible to
 Title: **Complete onboarding and enable notifications**
 Behavior: positive · Priority: high · Tags: onboarding
 
-Notes that make a mobile scenario good: assert the **system permission dialog** (platform-specific), the **persistence across app restart**, and any **animation/looped state**.
+Notes that make a mobile scenario good: assert the **system permission dialog** (platform-specific), the **persistence across app restart**, and any **looped or in-progress state** the person waits through.
 
 1. Tap "Turn on notifications" and grant the permission → **Expected:** The OS notification-permission dialog appears with Allow / Don't Allow; after Allow, the dialog closes and the app navigates to the dashboard; the onboarding is marked complete.
 2. Close the app fully and reopen → **Expected:** The app launches to the dashboard (not the welcome/onboarding screen); the user stays signed in; onboarding does not restart.
