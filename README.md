@@ -24,7 +24,7 @@ Eleven skills in two families for [QA Vault](https://qa-vault.com), an MCP-nativ
 /plugin install qa-vault-skills@qa-vault
 ```
 
-With the QA Vault MCP connected, ask your agent:
+Then sign in to QA Vault: `/plugin` → **qa-vault-skills** → MCP server **qa-vault** → **Authenticate**. Once connected, ask your agent:
 
 ```
 write test cases for the checkout flow
@@ -78,7 +78,7 @@ Neither plugin is required. Installing qa-vault-skills is self-contained.
 
 ## Prerequisites
 
-The manual QA practice skills need only the **QA Vault MCP** connected. The e2e automation harness additionally requires:
+The manual QA practice skills need only the **QA Vault MCP** connected. In Claude Code the plugin brings the connection with it and you sign in from the browser; in Codex you connect it yourself (see [Install](#install)). The e2e automation harness additionally requires:
 
 - **Node.js 18+**
 - **`@playwright/test` 1.60 or later** and **`@playwright/cli` 0.1.16 or later**, scaffolded by `setup-test-automation`
@@ -110,7 +110,15 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
    - **Project**: only active in this project, shared with teammates via `.claude/settings.json`
    - **Local**: only for you, only in this project
 
-3. **Verify**: type `/` and you should see the eleven skills listed, each annotated `(qa-vault-skills)`.
+3. **Sign in to QA Vault**: the plugin adds the QA Vault MCP server for you. Open
+
+   ```
+   /plugin
+   ```
+
+   choose **qa-vault-skills** → MCP server **qa-vault** → **Authenticate**. Your browser opens QA Vault; sign in and allow access for the workspace you want the agent to work in.
+
+4. **Verify**: type `/` and you should see the eleven skills listed, each annotated `(qa-vault-skills)`.
 
 **Updates:** Claude Code auto-updates installed plugins at startup.
 
@@ -137,7 +145,16 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
 
    Find `qa-vault-skills` under the `qa-vault` marketplace and toggle it on. `/plugins` is an interactive browser and does not accept inline arguments.
 
-3. **Verify**: type `$` in the Codex composer to open the skill-mention popup. The eleven skills should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's description.
+3. **Connect QA Vault**: the plugin carries no MCP connection for Codex. Add the server and sign in from your terminal:
+
+   ```
+   codex mcp add qa-vault --url https://mcp.qa-vault.com/mcp
+   codex mcp login qa-vault
+   ```
+
+   `login` opens QA Vault in your browser; sign in and allow access for the workspace you want the agent to work in.
+
+4. **Verify**: type `$` in the Codex composer to open the skill-mention popup. The eleven skills should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's description.
 
 **Updates:** refresh with `codex plugin marketplace upgrade qa-vault` periodically.
 
