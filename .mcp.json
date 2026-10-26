@@ -2,7 +2,7 @@
   "mcpServers": {
     "qa-vault": {
       "type": "http",
-      "url": "https://mcp-staging.qa-vault.com/mcp"
+      "url": "https://mcp.qa-vault.com/mcp"
     }
   }
 }
