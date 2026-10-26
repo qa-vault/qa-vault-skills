@@ -77,7 +77,7 @@ sentence; do not create it.
 ### 7. Act only on the engineer's decisions
 
 - Approved **UI-level** gaps → invoke `create-test-cases` with the exact brief (lesson, module,
-  mechanism, expected behaviour); its draft → review → transfer loop owns the rest.
+  mechanism, expected behaviour); its changeset → review → apply loop owns the rest.
 - Approved **tool/API-level** gaps stay in the report as ready-to-author briefs for the engineer.
 - A suspected bug is recorded **only when the engineer asks for that row to be recorded** — then,
   and only then, follow `skills/heal-automated-tests/references/defect-propagation.md` (search

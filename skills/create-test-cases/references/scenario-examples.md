@@ -1,17 +1,17 @@
 # Scenario examples
 
-Reference material for `create-test-cases`. These show what a good manual UI scenario looks like — the naming, the comprehensive UI-verifiable expected results, and the coverage spread. The **first** example is in the QA Vault draft form (the format you write into `qa-vault/`); the rest are prose illustrating expected-result richness across project types.
+Reference material for `create-test-cases`. These show what a good manual UI scenario looks like — the naming, the comprehensive UI-verifiable expected results, and the coverage spread. The **first** example is written out field by field the way a `create_case` item carries it; the rest are prose illustrating expected-result richness across project types.
 
 Rules visible throughout:
 - **Titles describe the scenario only** — `[Context] + [Action] + [Outcome]`, with **no suite/module-name prefix** (the suite + tags already supply module context).
-- **Only UI-verifiable detail** in expected results — no endpoints, status codes, table names, or logs.
+- **Only UI-verifiable outcomes** in expected results — what the person can read, do or no longer do; no endpoints, status codes, table names, or logs, and no presentation (colour, icons, animation, sizes) that a redesign could change without changing the behaviour.
 - **Preconditions only when non-obvious.**
 
 ---
 
-## 1. QA Vault draft form (the target)
+## 1. Fields as a case item carries them
 
-This is exactly how cases look in a `qa-vault/<suite>/<set>.md` draft. Folder = suite (e.g. `qa-vault/Checkout/`), file = a set (e.g. `payment.md`). `automation: not_automated` applies to all and is not repeated per block.
+Three cases of one set, laid out for reading the way a `create_case` payload carries them; the `description` and the three-line `search_abstract` every payload also needs are left out here for brevity. `automation: not_automated` applies to all and is not repeated.
 
 ```
 ### Pay with a valid card and reach order confirmation
@@ -43,7 +43,7 @@ This is exactly how cases look in a `qa-vault/<suite>/<set>.md` draft. Folder = 
   2. Attempt to proceed to checkout → Expected: Checkout is blocked/disabled with a message prompting the user to add items.
 ```
 
-Maps onto QA Vault fields: the `###` heading → `title`; `Priority`/`Behavior`/`Tags`/`Preconditions` → the same fields; each numbered line → a `step` with `action` (before `→ Expected:`) and `expected_result` (after). `description` is a short sentence you add when transferring if the title alone isn't self-explanatory.
+Maps onto QA Vault fields: the `###` heading → `title`; `Priority`/`Behavior`/`Tags`/`Preconditions` → the same fields; each numbered line → a `step` with `action` (before `→ Expected:`) and `expected_result` (after). `description` is the one- or two-sentence field every case carries.
 
 ---
 
@@ -65,7 +65,7 @@ Steps (abridged — note how each expected result captures everything visible to
 Title: **Complete onboarding and enable notifications**
 Behavior: positive · Priority: high · Tags: onboarding
 
-Notes that make a mobile scenario good: assert the **system permission dialog** (platform-specific), the **persistence across app restart**, and any **animation/looped state**.
+Notes that make a mobile scenario good: assert the **system permission dialog** (platform-specific), the **persistence across app restart**, and any **looped or in-progress state** the person waits through.
 
 1. Tap "Turn on notifications" and grant the permission → **Expected:** The OS notification-permission dialog appears with Allow / Don't Allow; after Allow, the dialog closes and the app navigates to the dashboard; the onboarding is marked complete.
 2. Close the app fully and reopen → **Expected:** The app launches to the dashboard (not the welcome/onboarding screen); the user stays signed in; onboarding does not restart.

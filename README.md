@@ -11,7 +11,7 @@ Eleven skills in two families for [QA Vault](https://qa-vault.com), an MCP-nativ
 
 ## What it does
 
-- **Authors and maintains manual UI test cases** from a spec, ticket, code, or conversation, as end-to-end scenarios drafted for your review before anything reaches the vault.
+- **Authors and maintains manual UI test cases** from a spec, ticket, code, or conversation, as end-to-end scenarios staged as a changeset you review in QA Vault before anything reaches the repository.
 - **Flags suspicious behavior while authoring.** Grounding cases in the real implementation often surfaces bugs before anyone explores the shipped feature. Each flag must be resolved by you before the write.
 - **Keeps the repository healthy.** Searches with every QA Vault mode, restructures suites and tags, backfills the search abstracts that power semantic search, and applies recorded lessons learned to find where the same class of failure can recur.
 - **Turns manual cases into Playwright e2e specs** verified against the live app, linked both ways to their source cases, then runs, heals, and reports them, recording every automated run back in QA Vault.
@@ -24,7 +24,7 @@ Eleven skills in two families for [QA Vault](https://qa-vault.com), an MCP-nativ
 /plugin install qa-vault-skills@qa-vault
 ```
 
-With the QA Vault MCP connected, ask your agent:
+Then sign in to QA Vault: `/plugin` → **qa-vault-skills** → MCP server **qa-vault** → **Authenticate**. Once connected, ask your agent:
 
 ```
 write test cases for the checkout flow
@@ -45,8 +45,8 @@ Full steps for both harnesses are under [Install](#install).
 | Skill | When it runs | What it does | Writes to the vault? |
 |---|---|---|---|
 | `search-test-cases` | "Do we have tests for X?", "what covers this?" | Finds existing cases using the QA Vault search modes: title, filtered, semantic, related, defect-seeded. | No, read-only |
-| `create-test-cases` | "Write test cases for X", "create scenarios for this feature" | Authors manual UI end-to-end scenarios, flags suspicious implemented behavior, writes after your review. | After review and flag resolution |
-| `maintain-test-cases` | After development changed the product: "sync the test cases", "the login flow changed" | Updates stale cases, adds coverage, removes what is obsolete, in one reviewed changeset. | After review and flag resolution |
+| `create-test-cases` | "Write test cases for X", "create scenarios for this feature" | Authors manual UI end-to-end scenarios, flags suspicious implemented behavior, stages them as a changeset you review and apply in QA Vault. | After your review on the Review page |
+| `maintain-test-cases` | After development changed the product: "sync the test cases", "the login flow changed" | Updates stale cases, adds coverage, removes what is obsolete, in one changeset reviewed as diffs. | After your review on the Review page |
 | `organize-test-repository` | "Restructure the suites", "clean up the tags", "audit for duplicates" | Restructures suites, tags, and case order; audits for sprawl and duplicates. | After a chat-preview confirm |
 | `backfill-search-abstracts` | Cases are missing search abstracts and semantic search misses them | Writes sibling-distinguishing abstracts in checked batches and repairs embeddings. | The `search_abstract` field only |
 | `apply-lessons-learned` | "Apply the lessons learned", "where else can this incident recur?" | Transfers each recorded class of failure onto other modules: coverage gaps to author, suspected live bugs to confirm. | No, reports and briefs only |
@@ -78,7 +78,7 @@ Neither plugin is required. Installing qa-vault-skills is self-contained.
 
 ## Prerequisites
 
-The manual QA practice skills need only the **QA Vault MCP** connected. The e2e automation harness additionally requires:
+The manual QA practice skills need only the **QA Vault MCP** connected. In Claude Code the plugin brings the connection with it and you sign in from the browser; in Codex you connect it yourself (see [Install](#install)). The e2e automation harness additionally requires:
 
 - **Node.js 18+**
 - **`@playwright/test` 1.60 or later** and **`@playwright/cli` 0.1.16 or later**, scaffolded by `setup-test-automation`
@@ -110,7 +110,15 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
    - **Project**: only active in this project, shared with teammates via `.claude/settings.json`
    - **Local**: only for you, only in this project
 
-3. **Verify**: type `/` and you should see the eleven skills listed, each annotated `(qa-vault-skills)`.
+3. **Sign in to QA Vault**: the plugin adds the QA Vault MCP server for you. Open
+
+   ```
+   /plugin
+   ```
+
+   choose **qa-vault-skills** → MCP server **qa-vault** → **Authenticate**. Your browser opens QA Vault; sign in and allow access for the workspace you want the agent to work in.
+
+4. **Verify**: type `/` and you should see the eleven skills listed, each annotated `(qa-vault-skills)`.
 
 **Updates:** Claude Code auto-updates installed plugins at startup.
 
@@ -137,7 +145,16 @@ The manual QA practice skills need only the **QA Vault MCP** connected. The e2e 
 
    Find `qa-vault-skills` under the `qa-vault` marketplace and toggle it on. `/plugins` is an interactive browser and does not accept inline arguments.
 
-3. **Verify**: type `$` in the Codex composer to open the skill-mention popup. The eleven skills should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's description.
+3. **Connect QA Vault**: the plugin carries no MCP connection for Codex. Add the server and sign in from your terminal:
+
+   ```
+   codex mcp add qa-vault --url https://mcp.qa-vault.com/mcp
+   codex mcp login qa-vault
+   ```
+
+   `login` opens QA Vault in your browser; sign in and allow access for the workspace you want the agent to work in.
+
+4. **Verify**: type `$` in the Codex composer to open the skill-mention popup. The eleven skills should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's description.
 
 **Updates:** refresh with `codex plugin marketplace upgrade qa-vault` periodically.
 

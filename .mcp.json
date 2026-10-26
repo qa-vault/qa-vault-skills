@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "qa-vault": {
+      "type": "http",
+      "url": "https://mcp.qa-vault.com/mcp"
+    }
+  }
+}
