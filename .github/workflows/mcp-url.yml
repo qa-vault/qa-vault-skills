@@ -1,0 +1,34 @@
+name: MCP server URL
+
+# The plugin connects Claude Code to the QA Vault MCP server named in .mcp.json.
+# Each branch is served to a different audience: `main` through the qa-vault
+# marketplace (production), `staging` through the staging marketplace. This
+# check keeps each branch pointed at its own server, so a staging URL can never
+# reach production users and the other way round. A staging → main pull request
+# swaps the URL in a commit of its own.
+
+on:
+  pull_request:
+    branches: [main, staging]
+  push:
+    branches: [main, staging]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: .mcp.json names the server of the target branch
+        env:
+          TARGET: ${{ github.base_ref || github.ref_name }}
+        run: |
+          case "$TARGET" in
+            main)    expected="https://mcp.qa-vault.com/mcp" ;;
+            staging) expected="https://mcp-staging.qa-vault.com/mcp" ;;
+            *)       echo "No URL rule for branch $TARGET"; exit 0 ;;
+          esac
+          servers=$(jq -r '.mcpServers | keys | join(",")' .mcp.json)
+          url=$(jq -r '.mcpServers["qa-vault"].url' .mcp.json)
+          [ "$servers" = "qa-vault" ] || { echo "::error file=.mcp.json::expected exactly one server, qa-vault; found: $servers"; exit 1; }
+          [ "$url" = "$expected" ] || { echo "::error file=.mcp.json::$TARGET must point at $expected, found $url"; exit 1; }
+          echo "$TARGET → $url"
