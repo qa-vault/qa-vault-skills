@@ -48,7 +48,7 @@ The `skills/` directory is the **single source of truth** for skill content. Bot
 
 ## Skills overview
 
-Eleven self-contained skills, auto-discovered from `skills/`, in two families — **manual QA practice** (the QA Vault content lifecycle) and the **e2e automation harness** (Playwright generation, healing, and reporting). Each embeds its operating-discipline rules inline (there is no shared conventions skill).
+Twelve self-contained skills, auto-discovered from `skills/`, in two families — **manual QA practice** (the QA Vault content lifecycle) and the **e2e automation harness** (Playwright generation, healing, and reporting). Each embeds its operating-discipline rules inline (there is no shared conventions skill).
 
 **Manual QA practice:**
 
@@ -58,6 +58,7 @@ Eleven self-contained skills, auto-discovered from `skills/`, in two families �
 - **`organize-test-repository`** — structural housekeeping (suites, tags, case order) in reactive and proactive-audit modes. Previews plans in chat (no draft files); flags duplicate cases for per-pair decision rather than auto-resolving.
 - **`backfill-search-abstracts`** — repairs semantic search for a project whose cases lack a `search_abstract`: inventories the gap, works in whole-suite zones, writes sibling-distinguishing abstracts, applies them via MCP, and re-embeds. Writes only the `search_abstract` field.
 - **`apply-lessons-learned`** — carries a project's recorded Lessons Learned (`get_project_lessons`) onto other modules. Gates every run on an engineer-confirmed lessons × modules scope, profiles each lesson's class of failure, scans docs and code per cell, checks vault coverage, and reports coverage gaps plus suspected bugs in product terms. Investigation only: cases go through `create-test-cases` on approval, defects through the shared defect-propagation reference only on an explicit request.
+- **`share-feedback`** — after helping, offers once per conversation to send the QA Vault team feedback (`send_feedback`) in one of four categories (defect, confusion, feature_request, positive); for a defect the agent hit itself it only says so and asks. Sends only on the person's yes, in the agent's own words, with secrets, personal data, names, code and links described in plain words; handles the server's refusals (forbidden content, lengths, the 10-a-day cap) per its table.
 
 **E2e automation harness:**
 

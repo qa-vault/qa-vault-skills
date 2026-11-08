@@ -7,7 +7,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-cc785c)](#install)
 [![Codex CLI](https://img.shields.io/badge/Codex_CLI-plugin-1f2328)](#install)
 
-Eleven skills in two families for [QA Vault](https://qa-vault.com), an MCP-native test-management platform. Part of the [qa-vault](https://github.com/qa-vault/marketplace) plugin family.
+Twelve skills in two families for [QA Vault](https://qa-vault.com), an MCP-native test-management platform. Part of the [qa-vault](https://github.com/qa-vault/marketplace) plugin family.
 
 ## What it does
 
@@ -50,6 +50,7 @@ Full steps for both harnesses are under [Install](#install).
 | `organize-test-repository` | "Restructure the suites", "clean up the tags", "audit for duplicates" | Restructures suites, tags, and case order; audits for sprawl and duplicates. | After a chat-preview confirm |
 | `backfill-search-abstracts` | Cases are missing search abstracts and semantic search misses them | Writes sibling-distinguishing abstracts in checked batches and repairs embeddings. | The `search_abstract` field only |
 | `apply-lessons-learned` | "Apply the lessons learned", "where else can this incident recur?" | Transfers each recorded class of failure onto other modules: coverage gaps to author, suspected live bugs to confirm. | No, reports and briefs only |
+| `share-feedback` | A QA Vault tool failed, you were confused by QA Vault, missed a capability, or were pleased; or "send feedback to QA Vault" | Offers once, after helping, to send the QA Vault team a short categorized note in the agent's own words, with no secrets, personal data, code or links. | Sends feedback to the QA Vault team, only on your yes |
 
 ### E2E automation harness
 
@@ -118,7 +119,7 @@ The manual QA practice skills need only the **QA Vault MCP** connected. In Claud
 
    choose **qa-vault-skills** → MCP server **qa-vault** → **Authenticate**. Your browser opens QA Vault; sign in and allow access for the workspace you want the agent to work in.
 
-4. **Verify**: type `/` and you should see the eleven skills listed, each annotated `(qa-vault-skills)`.
+4. **Verify**: type `/` and you should see the twelve skills listed, each annotated `(qa-vault-skills)`.
 
 **Updates:** Claude Code auto-updates installed plugins at startup.
 
@@ -154,7 +155,7 @@ The manual QA practice skills need only the **QA Vault MCP** connected. In Claud
 
    `login` opens QA Vault in your browser; sign in and allow access for the workspace you want the agent to work in.
 
-4. **Verify**: type `$` in the Codex composer to open the skill-mention popup. The eleven skills should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's description.
+4. **Verify**: type `$` in the Codex composer to open the skill-mention popup. The twelve skills should be listed. Invoke one explicitly with `$<skill-name> <your request>`, or let Codex auto-detect when your prompt matches a skill's description.
 
 **Updates:** refresh with `codex plugin marketplace upgrade qa-vault` periodically.
 
