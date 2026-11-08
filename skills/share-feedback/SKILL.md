@@ -58,7 +58,7 @@ Your own words, in the conversation's language, never a quote of the person's me
 | `case_number` | The case it was about (`127` for `#127`), when there was one |
 | `tool_name` | The QA Vault tool involved (for example `apply_changeset`), when there was one (up to 100) |
 | `agent_name` | The agent or app you run in (Claude Code, Codex, …) (up to 100) |
-| `idempotency_key` | One unique string for this feedback, made once and reused on every retry of the same send |
+| `idempotency_key` | A new random UUID for this feedback, made once and reused only on a retry of the same send. Never a readable key like `feedback-1`: a key already used for other feedback is refused |
 
 Use the room the story needs; do not pad it.
 
@@ -92,6 +92,7 @@ When the call is refused:
 | "Project "…" not found" | Send again without `project`, or with the right project code. |
 | "The QA Vault team already received 10 pieces of feedback from this workspace today. …" | Tell the person; do not retry today. |
 | "Feedback is sent through a person's agent." | It is final. Tell the person what it says. |
+| "This idempotency_key was already used for different feedback. …" | Make a new random UUID and send once more. |
 | A timeout or a network error | Send again once with the same `idempotency_key` (a repeat is answered as the first send); if that fails too, tell the person it could not be sent. |
 
 ## Red flags
