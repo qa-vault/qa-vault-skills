@@ -45,7 +45,7 @@ Full steps for both harnesses are under [Install](#install).
 | Skill | When it runs | What it does | Writes to the vault? |
 |---|---|---|---|
 | `search-test-cases` | "Do we have tests for X?", "what covers this?" | Finds existing cases using the QA Vault search modes: title, filtered, semantic, related, defect-seeded. | No, read-only |
-| `create-test-cases` | "Write test cases for X", "create scenarios for this feature" | Authors manual UI end-to-end scenarios, flags suspicious implemented behavior, stages them as a changeset you review and apply in QA Vault. | After your review on the Review page |
+| `create-test-cases` | "Write test cases for X", "create scenarios for this feature" | Authors manual UI end-to-end scenarios, flags suspicious implemented behavior, stages them as a changeset you review and merge in QA Vault. | After your review on the Review page |
 | `maintain-test-cases` | After development changed the product: "sync the test cases", "the login flow changed" | Updates stale cases, adds coverage, removes what is obsolete, in one changeset reviewed as diffs. | After your review on the Review page |
 | `organize-test-repository` | "Restructure the suites", "clean up the tags", "audit for duplicates" | Restructures suites, tags, and case order; audits for sprawl and duplicates. | After a chat-preview confirm |
 | `backfill-search-abstracts` | Cases are missing search abstracts and semantic search misses them | Writes sibling-distinguishing abstracts in checked batches and repairs embeddings. | The `search_abstract` field only |
